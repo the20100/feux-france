@@ -46,8 +46,13 @@ export default function MapView(props: Props) {
     const baseSat = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       { attribution: "Esri World Imagery", maxZoom: 19 });
-    fetch("/france-metropole.geojson").then((r) => r.json()).then((gj) =>
-      L.geoJSON(gj, { style: { color: "#324250", weight: 1, fill: false, opacity: 0.8 } }).addTo(map));
+    // StrictMode (dev) démonte/remonte l'effet : ne pas ajouter la couche
+    // si la carte a été détruite entre-temps
+    let disposed = false;
+    fetch("/france-metropole.geojson").then((r) => r.json()).then((gj) => {
+      if (!disposed)
+        L.geoJSON(gj, { style: { color: "#324250", weight: 1, fill: false, opacity: 0.8 } }).addTo(map);
+    }).catch(() => {});
 
     const ctx: MapCtx = {
       map,
@@ -85,6 +90,7 @@ export default function MapView(props: Props) {
     };
     document.addEventListener("visibilitychange", onVis);
     return () => {
+      disposed = true;
       document.removeEventListener("visibilitychange", onVis);
       map.remove();
       ctxRef.current = null;
