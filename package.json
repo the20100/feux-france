@@ -1,0 +1,29 @@
+{
+  "name": "feux-france",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plateforme de suivi temps réel des feux de forêt en France — détection satellite, risque officiel, météo, moyens aériens, renseignement en sources ouvertes.",
+  "scripts": {
+    "dev": "next dev -p 8742",
+    "build": "next build",
+    "start": "next start -p 8742",
+    "update": "node scripts/update.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "leaflet": "^1.9.4",
+    "leaflet-velocity": "^2.1.4",
+    "leaflet.heat": "^0.2.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/leaflet": "^1.9.14",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

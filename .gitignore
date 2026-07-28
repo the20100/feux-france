@@ -1,0 +1,24 @@
+# secrets — ne JAMAIS committer
+.env
+.env.local
+.env.*.local
+credentials*.json
+
+# base de données locale (historique détections, caches)
+data/
+*.db
+*.db-shm
+*.db-wal
+geocache.json*
+
+# node / next
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# divers
+.DS_Store
+npm-debug.log*
+.claude/
