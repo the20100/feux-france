@@ -1,0 +1,86 @@
+# Déploiement Dokploy (VPS Hetzner prod2). Cible du domaine omni.vima.work :
+# le service `feux-app`, port 3000. Conventions du serveur respectées ici :
+#  - seul le service exposé touche `dokploy-network`, le cron reste interne ;
+#  - `dokploy-network` est PARTAGÉ entre projets : tout nom résolu depuis un
+#    conteneur multi-réseaux doit être préfixé par le projet (`feux-app` et
+#    non `app`, sinon on peut tomber sur le conteneur d'un autre projet) ;
+#  - `mem_limit` sur tout service Node : sans limite cgroup, V8 dimensionne son
+#    heap sur les 16 Go de la machine et chaque app se croit seule au monde.
+
+services:
+  feux-app:
+    build:
+      context: .
+      target: runner
+    restart: unless-stopped
+    environment:
+      # Toutes ces clés sont facultatives par conception : chaque fonctionnalité
+      # se désactive proprement si la sienne est absente (cf. README).
+      EXA_API_KEY: ${EXA_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
+      AI_DAILY_BUDGET: ${AI_DAILY_BUDGET:-}
+      MF_TOKEN_OBS: ${MF_TOKEN_OBS:-}
+      MF_TOKEN_VIGILANCE: ${MF_TOKEN_VIGILANCE:-}
+      MF_TOKEN_FORETS: ${MF_TOKEN_FORETS:-}
+      MF_TOKEN_RADAR: ${MF_TOKEN_RADAR:-}
+      MF_TOKEN_CLIMAT: ${MF_TOKEN_CLIMAT:-}
+      MF_TOKEN_AROME: ${MF_TOKEN_AROME:-}
+      MF_TOKEN_AROME_IF: ${MF_TOKEN_AROME_IF:-}
+      OPENSKY_CLIENT_ID: ${OPENSKY_CLIENT_ID:-}
+      OPENSKY_CLIENT_SECRET: ${OPENSKY_CLIENT_SECRET:-}
+    volumes:
+      # Historique des détections, géocodage, caches, trajectoires : la seule
+      # donnée non reconstructible du projet (FIRMS ne rediffuse que 7 jours).
+      - feux-data:/app/data
+    healthcheck:
+      # Pas de curl ni wget dans l'image slim — `fetch` global de Node 22.
+      # /api/status lit la base : le conteneur n'est « healthy » que si SQLite
+      # répond, pas seulement si le serveur HTTP écoute.
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/status').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      dokploy-network:
+      internal:
+        aliases: [feux-app]
+    mem_limit: 1g
+
+  # Remplace le `npm run update` en cron : sans lui la base cesse d'ingérer dès
+  # qu'aucun visiteur n'ouvre la page (l'ingestion FIRMS est déclenchée par
+  # l'appel API, avec un TTL de 10 min).
+  feux-cron:
+    build:
+      context: .
+      target: cron
+    restart: unless-stopped
+    init: true
+    environment:
+      # `feux-app` est le nom du service ET son alias sur le réseau interne —
+      # jamais l'IP ni le nom de conteneur, que Dokploy préfixe.
+      FEUX_URL: http://feux-app:3000
+      UPDATE_INTERVAL: ${UPDATE_INTERVAL:-1800}
+    depends_on:
+      feux-app:
+        condition: service_healthy
+    networks:
+      - internal
+    mem_limit: 128m
+
+networks:
+  dokploy-network:
+    external: true
+  internal:
+
+volumes:
+  # `name:` explicite pour échapper au préfixage Dokploy — la base doit survivre
+  # à un renommage du projet. Pas `external:` : le volume part vide et un
+  # `docker volume create` oublié ferait échouer tout le déploiement.
+  feux-data:
+    name: feux-data

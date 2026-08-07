@@ -1,0 +1,74 @@
+name: CI & Déploiement
+
+# Le build de production a lieu sur le VPS (Dokploy clone le dépôt et lance
+# `docker compose build`) : ce workflow ne le remplace pas, il l'AUTORISE.
+# Sans le job `verify`, un push qui ne compile même pas partirait directement
+# en production — le webhook ne vérifie rien, il sonne.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22 et pas 24 : c'est la version du Dockerfile, choisie parce que
+      # `better-sqlite3` y publie des prebuilds testés. Une CI sur une autre
+      # ABI validerait un binaire qui n'ira jamais en production.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installation
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Aucune clé d'API n'est fournie ici, et c'est le test : le projet est
+      # conçu pour que chaque fonctionnalité se désactive proprement sans la
+      # sienne. Toutes les routes sont `force-dynamic`, le build ne touche donc
+      # ni la base ni le réseau.
+      - name: Build
+        run: npm run build
+
+  deploy:
+    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Sur le job seulement : deux PR vérifiées en parallèle, c'est souhaitable ;
+    # deux déploiements en parallèle sur le même VPS, non.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - name: Déclencher le déploiement Dokploy
+        env:
+          WEBHOOK_URL: ${{ secrets.DOKPLOY_WEBHOOK_URL }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "::error::secret DOKPLOY_WEBHOOK_URL absent"
+            exit 1
+          fi
+          # Dokploy rejoue la logique d'un webhook GitHub : sans l'en-tête
+          # `x-github-event` il n'extrait aucune branche et répond 301
+          # « Branch Not Match ». `commits` doit être présent (même vide) pour
+          # le filtre watchPaths.
+          # Le webhook accuse réception, il ne garantit PAS que le build a
+          # réussi : le suivi se fait sur https://dock.vima.work.
+          code=$(curl -sSL -o /tmp/out.txt -w '%{http_code}' -X POST "$WEBHOOK_URL" \
+            -H 'content-type: application/json' \
+            -H 'x-github-event: push' \
+            -d "{\"ref\":\"${REF}\",\"commits\":[]}")
+          echo "HTTP $code"
+          cat /tmp/out.txt
+          [ "$code" -ge 200 ] && [ "$code" -lt 300 ]

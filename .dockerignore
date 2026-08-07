@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+data
+.git
+.github
+.env
+.env.*
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+.claude
+README.md

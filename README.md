@@ -57,6 +57,28 @@ Mise à jour périodique de l'historique (le serveur doit tourner) :
 npm run update          # à mettre en cron toutes les ~30 min
 ```
 
+## Déploiement
+
+En ligne sur **https://omni.vima.work**, hébergé sur le VPS Hetzner via Dokploy.
+
+Un push sur `main` déclenche `.github/workflows/deploy.yml` : le job `verify`
+rejoue `typecheck` + `build` sur un runner GitHub, puis `deploy` sonne le
+webhook Dokploy (secret `DOKPLOY_WEBHOOK_URL`), qui reconstruit l'image sur le
+serveur depuis `docker-compose.prod.yml`. Le webhook accuse réception mais ne
+garantit rien : le résultat du build se lit sur https://dock.vima.work.
+
+Deux conteneurs : `feux-app` (Next.js en sortie `standalone`, exposé par
+Traefik) et `feux-cron`, qui rejoue `npm run update` toutes les 30 min — sans
+lui la base cesse d'ingérer dès que plus personne n'ouvre la page, l'ingestion
+FIRMS étant déclenchée par l'appel API.
+
+L'historique (`data/feux.db`) vit dans le volume Docker `feux-data`, hors du
+cycle de vie des conteneurs : il survit aux redéploiements. C'est la seule
+donnée non reconstructible du projet — la NASA ne rediffuse que 7 jours.
+
+Les clés d'API se règlent dans Dokploy (onglet Environment du service), pas
+dans le dépôt.
+
 ## Clés API (`.env`)
 
 | Variable | Service | Rôle | Sans elle |
