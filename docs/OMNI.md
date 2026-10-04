@@ -141,3 +141,11 @@ Canonical URLs remove tracking parameters. Discovery responses are cached for on
 IMF PortWatch's Daily Chokepoints dataset is fetched every six hours for `chokepoint6` (Strait of Hormuz). Daily total, tanker and cargo transit indicators have their own append-only revision history. Historical views honor observation dates and archive knowledge times. Missing observations are not zeros. AIS coverage is incomplete and the latest source date is shown explicitly. PortWatch does not provide live vessel positions in this integration.
 
 Both archive tables and discovery budget/cache tables live in the existing persistent SQLite volume and are covered by the database backups. Failed refreshes preserve archived data and expose the source error.
+
+### Social posts and videos
+
+The Iran & Gulf feed offers All, News, Official, Social and Videos filters, persisted in the URL. Social discovery runs every three hours with English, Arabic and Persian queries, plus a video query, within the existing shared 1 USD/day Exa budget. Exhausting that budget pauses additional searches until the next UTC day; it does not remove the archive.
+
+Only dated, relevant individual post/video URLs from supported platforms are retained. Profile and search pages, future/undated results and unrelated results are excluded. Twitter/X URLs, YouTube variants and Reddit share links are canonicalized. Each run retains one result per canonical URL; subsequent changes create archive revisions. Social posts and videos always enter as unverified signals without inferred coordinates or event times. Cards retain original-language excerpts (up to 280 characters), source previews when supplied, and links to the original platform. Midnight timestamps from search metadata are displayed as dates rather than pretending to establish the post's precise time.
+
+Platform coverage depends on Exa indexing. Initial live checks returned usable Bluesky posts, but no relevant dated video results; this is not a guarantee of X, Instagram or video coverage. Empty feeds remain explicit, without substituting unrelated content. Public post excerpts may include linked headlines and do not establish eyewitness status or independent corroboration.

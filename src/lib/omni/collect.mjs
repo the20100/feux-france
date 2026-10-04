@@ -1,3 +1,4 @@
+import {collectSocial} from './social.mjs';
 import {collectDiscovery} from './discovery.mjs';
 import {collectPortWatch} from './traffic.mjs';
 import { collectViina } from './viina.mjs';
@@ -99,7 +100,8 @@ export async function syncSources(db, { force = false, only = null, get = fetchT
     if (!runId) continue;
     try {
       let added = 0;
-      if (['exa','ukmto-exa'].includes(source.connector)) added = await collectDiscovery(db,source);
+      if (source.connector==='social-exa') added = await collectSocial(db,source);
+      else if (['exa','ukmto-exa'].includes(source.connector)) added = await collectDiscovery(db,source);
       if (source.connector === 'portwatch') added = await collectPortWatch(db,source,get);
       if (source.connector === 'viina') added = await collectViina(db);
       if (source.connector === 'reliefweb') added = await collectReliefWeb(db,source,get);
