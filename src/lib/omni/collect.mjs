@@ -1,3 +1,5 @@
+import {collectDiscovery} from './discovery.mjs';
+import {collectPortWatch} from './traffic.mjs';
 import { collectViina } from './viina.mjs';
 import { XMLParser } from 'fast-xml-parser';
 import { sources, topics } from './catalog.mjs';
@@ -97,6 +99,8 @@ export async function syncSources(db, { force = false, only = null, get = fetchT
     if (!runId) continue;
     try {
       let added = 0;
+      if (['exa','ukmto-exa'].includes(source.connector)) added = await collectDiscovery(db,source);
+      if (source.connector === 'portwatch') added = await collectPortWatch(db,source,get);
       if (source.connector === 'viina') added = await collectViina(db);
       if (source.connector === 'reliefweb') added = await collectReliefWeb(db,source,get);
       if (source.connector === 'un-news') added = await collectGulfNews(db,source,get);

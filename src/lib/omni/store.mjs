@@ -1,3 +1,4 @@
+import {readTraffic} from './traffic.mjs';
 import Database from 'better-sqlite3';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
@@ -15,6 +16,11 @@ export function openStore(filename = process.env.OMNI_DB_PATH || join(process.cw
   const db = new Database(filename);
   db.pragma('journal_mode = WAL'); db.pragma('busy_timeout = 10000'); db.pragma('foreign_keys = ON');
   db.exec(`
+    CREATE TABLE IF NOT EXISTS discovery_spend (id TEXT PRIMARY KEY,day TEXT NOT NULL,started_at TEXT NOT NULL,reserved_micros INTEGER NOT NULL,actual_micros INTEGER);
+    CREATE INDEX IF NOT EXISTS discovery_spend_day ON discovery_spend(day);
+    CREATE TABLE IF NOT EXISTS discovery_cache (key TEXT PRIMARY KEY,fetched_at TEXT NOT NULL,payload TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS traffic_observations (id INTEGER PRIMARY KEY,series TEXT NOT NULL,day TEXT NOT NULL,recorded_at TEXT NOT NULL,checksum TEXT NOT NULL,payload TEXT NOT NULL);
+    CREATE INDEX IF NOT EXISTS traffic_series_time ON traffic_observations(series,day,recorded_at);
     CREATE TABLE IF NOT EXISTS omni_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS sources (id TEXT PRIMARY KEY, payload TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS ingestion_runs (id TEXT PRIMARY KEY, source_id TEXT NOT NULL REFERENCES sources(id), started_at TEXT NOT NULL, finished_at TEXT, status TEXT NOT NULL, added INTEGER NOT NULL DEFAULT 0, error TEXT);
@@ -133,15 +139,17 @@ export function readDashboard(db, { domain = 'global', topic = '', at = null, kn
   const rows = db.prepare(`WITH versions AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY source_id,external_id ORDER BY id DESC) AS rank, COUNT(*) OVER (PARTITION BY source_id,external_id) AS revision_count FROM observations WHERE recorded_at<=? AND published_at<=?) SELECT * FROM versions WHERE rank=1 AND occurred_at<=? ${where} ORDER BY occurred_at DESC,id DESC LIMIT ?`).all(...args,limit+1);
   const observations = rows.slice(0,limit).map(r => ({ ...JSON.parse(r.payload), id:r.id, recordedAt:r.recorded_at, revisions:r.revision_count }));
   const states = db.prepare('SELECT * FROM source_state').all();
-  const sourceList = sources.filter(s => domain === 'global' || s.domain === domain).map(s => {
+  const sourceList = sources.filter(s => (domain === 'global' || s.domain === domain) && (!topic || !s.topic || s.topic === topic)).map(s => {
     const state = states.find(x => x.source_id === s.id);
-    const lastDataAt = s.id === 'viina' ? db.prepare("SELECT MAX(valid_at) date FROM territory_snapshots WHERE dataset_id='viina-consensus'").get().date : db.prepare('SELECT MAX(published_at) date FROM observations WHERE source_id=?').get(s.id).date;
+    const lastDataAt = s.id === 'portwatch-hormuz' ? db.prepare("SELECT MAX(day) date FROM traffic_observations WHERE series='hormuz'").get().date : s.id === 'viina' ? db.prepare("SELECT MAX(valid_at) date FROM territory_snapshots WHERE dataset_id='viina-consensus'").get().date : db.prepare('SELECT MAX(published_at) date FROM observations WHERE source_id=?').get(s.id).date;
     return { ...s, ...state, lastDataAt, health: s.id === 'territories' && !process.env.OMNI_TERRITORY_FEED_URL ? 'manual' : !s.connector ? 'reference' : !state?.last_attempt ? 'pending' : state.error ? 'error' : (!state.last_success || +new Date(now)-+new Date(state.last_success) > s.interval*2000) ? 'stale' : 'ok' };
   });
   const territoryRows = db.prepare(`WITH versions AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY topic,dataset_id ORDER BY valid_at DESC,id DESC) AS rank FROM territory_snapshots WHERE valid_at<=? AND recorded_at<=? ${topic ? 'AND topic=?' : ''}) SELECT * FROM versions WHERE rank=1`).all(validCutoff,knowledgeCutoff,...(topic ? [topic] : []));
   const territories = domain === 'pandemic' ? [] : territoryRows.map(r => ({ ...JSON.parse(r.payload), recordedAt:r.recorded_at, snapshotId:r.id }));
   const history = db.prepare(`SELECT occurred_at AS date FROM observations WHERE recorded_at<=? ${domain !== 'global' ? 'AND domain=?' : ''} ${topic ? 'AND topic=?' : ''} UNION SELECT valid_at AS date FROM territory_snapshots WHERE recorded_at<=? ${domain === 'pandemic' ? 'AND 0=1' : ''} ${topic ? 'AND topic=?' : ''} ORDER BY date`).all(knowledgeCutoff,...(domain !== 'global' ? [domain] : []),...(topic ? [topic] : []),knowledgeCutoff,...(topic ? [topic] : []));
-  return { observations, territories, sources: sourceList, topics, timeline: [...new Set(history.map(r=>r.date))], truncated: rows.length > limit, fetchedAt:now, at:validCutoff, knownAt:knowledgeCutoff, runs:db.prepare('SELECT * FROM ingestion_runs ORDER BY started_at DESC LIMIT 20').all() };
+  const traffic = domain !== 'pandemic' && (!topic || topic === 'iran-gulf') ? readTraffic(db,validCutoff,knowledgeCutoff) : null;
+  const spend = db.prepare('SELECT COUNT(*) requests,COALESCE(SUM(actual_micros),0)/1000000.0 actualUsd,COALESCE(SUM(MAX(reserved_micros,COALESCE(actual_micros,0))),0)/1000000.0 budgetUsedUsd FROM discovery_spend WHERE day=?').get(now.slice(0,10));
+  return { observations, traffic, discoveryBudget:{...spend,day:now.slice(0,10),limitUsd:Number(process.env.OMNI_EXA_DAILY_BUDGET_USD||1)}, territories, sources: sourceList, topics, timeline: [...new Set([...history.map(r=>r.date),...(traffic?.points||[]).map(p=>p.date+'T00:00:00.000Z')])].sort(), truncated: rows.length > limit, fetchedAt:now, at:validCutoff, knownAt:knowledgeCutoff, runs:db.prepare('SELECT * FROM ingestion_runs ORDER BY started_at DESC LIMIT 20').all() };
 }
 export function observationHistory(db, id) {
   const row = db.prepare('SELECT source_id,external_id FROM observations WHERE id=?').get(id);

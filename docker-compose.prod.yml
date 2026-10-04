@@ -17,6 +17,7 @@ services:
       # Toutes ces clés sont facultatives par conception : chaque fonctionnalité
       # se désactive proprement si la sienne est absente (cf. README).
       OMNI_WORKER_ENABLED: "0"
+      OMNI_EXA_DAILY_BUDGET_USD: ${OMNI_EXA_DAILY_BUDGET_USD:-1}
       CARTO_API_KEY: ${CARTO_API_KEY:-}
       CARTO_MAP_ORIGIN: ${CARTO_MAP_ORIGIN:-https://omni.vima.work}
       EXA_API_KEY: ${EXA_API_KEY:-}
@@ -83,6 +84,8 @@ services:
     restart: unless-stopped
     init: true
     environment:
+      EXA_API_KEY: ${EXA_API_KEY:-}
+      OMNI_EXA_DAILY_BUDGET_USD: ${OMNI_EXA_DAILY_BUDGET_USD:-1}
       OMNI_TERRITORY_FEED_URL: ${OMNI_TERRITORY_FEED_URL:-}
     volumes:
       - feux-data:/app/data

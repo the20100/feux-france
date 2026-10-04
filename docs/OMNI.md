@@ -131,3 +131,13 @@ La clé CARTO locale n’est pas transmise automatiquement à Dokploy. Pour dép
 ## Iran & Gulf
 
 WAR includes `iran-gulf`, covering Iran, Iraq, the Gulf states and the Strait of Hormuz. An hourly English UN News feed is filtered for regional security and humanitarian relevance; ReliefWeb searches all eight countries. Reports retain publication dates, attribution and revisions, without invented incident coordinates or territorial polygons. The UN feed is a rolling window, so initial coverage is not a complete conflict history.
+
+## Iran & Gulf discovery and maritime indicators
+
+The hourly worker searches Exa for maritime, hostilities, diplomacy and humanitarian coverage. UKMTO searches are restricted to its official domain; only dated official PDF metadata is published. Publication dates and explicit report times remain distinct from unknown event times. Undated or future records are excluded, and unknown coordinates remain unset. Related coverage is a reading aid, not independent corroboration.
+
+Canonical URLs remove tracking parameters. Discovery responses are cached for one hour in SQLite; observations retain revisions. `EXA_API_KEY` is server-side. `OMNI_EXA_DAILY_BUDGET_USD` defaults to 1 USD per UTC day, with an atomic conservative 0.01 USD reservation per request and a 120-request ceiling. Failures retain their reservation. The daily budget may pause hourly discovery; FIRES Exa usage is separate. Sources show actual reported costs and reserved budget usage.
+
+IMF PortWatch's Daily Chokepoints dataset is fetched every six hours for `chokepoint6` (Strait of Hormuz). Daily total, tanker and cargo transit indicators have their own append-only revision history. Historical views honor observation dates and archive knowledge times. Missing observations are not zeros. AIS coverage is incomplete and the latest source date is shown explicitly. PortWatch does not provide live vessel positions in this integration.
+
+Both archive tables and discovery budget/cache tables live in the existing persistent SQLite volume and are covered by the database backups. Failed refreshes preserve archived data and expose the source error.
