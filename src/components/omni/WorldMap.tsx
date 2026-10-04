@@ -32,7 +32,7 @@ export default function WorldMap({topics,observations,territories,topic,onTopic,
       const toggle=()=>{if(m.getZoom()>=3&&!tiled){if(!m.hasLayer(labels))labels.addTo(m);}else if(m.hasLayer(labels))m.removeLayer(labels);};m.on('zoomend',toggle);toggle();
     }).catch(e=>{if(e.name!=='AbortError'){const note=document.createElement('div');note.textContent='Basemap unavailable';L.popup().setLatLng(m.getCenter()).setContent(note).openOn(m);}});
     m.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/about/terms-of-use/">Natural Earth</a> · geographic basemap, not territorial control');
-    try{const saved=JSON.parse(sessionStorage.getItem(`omni-camera-${storageKey}`)||'null');if(saved&&Number.isFinite(saved.lat)&&Number.isFinite(saved.lon)&&Number.isFinite(saved.zoom))m.setView([saved.lat,saved.lon],saved.zoom);}catch{}
+    try{const saved=JSON.parse(sessionStorage.getItem(`omni-camera-${storageKey}`)||'null');if(saved&&Number.isFinite(saved.lat)&&Number.isFinite(saved.lon)&&Number.isFinite(saved.zoom))m.setView([saved.lat,saved.lon],saved.zoom,{animate:false});}catch{}
     m.on('moveend',()=>{try{const c=m.getCenter();sessionStorage.setItem(`omni-camera-${storageKey}`,JSON.stringify({lat:c.lat,lon:c.lng,zoom:m.getZoom()}));}catch{}});
     L.control.zoom({position:'bottomright'}).addTo(m);L.control.scale({position:'bottomleft',imperial:false}).addTo(m);
     map.current=m;group.current=L.layerGroup().addTo(m);
@@ -45,6 +45,7 @@ export default function WorldMap({topics,observations,territories,topic,onTopic,
     const t=topics.find(t=>t.id===topic);
     if(topic&&!t)return;
     lastTopic.current=topic;
+    map.current?.stop();
     if(t?.lat!=null&&t?.lon!=null)map.current?.setView([t.lat,t.lon],t.zoom,{animate:false});
     else map.current?.setView([24,28],2,{animate:false});
   },[topic,topics]);
