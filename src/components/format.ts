@@ -1,16 +1,16 @@
 /** Helpers d'affichage partagés. */
 
-export const fmtInt = (n: number) => n.toLocaleString("fr-FR");
+export const fmtInt = (n: number) => n.toLocaleString("en-GB");
 
 export const fmtAgo = (epoch: number) => {
   const h = (Date.now() / 1000 - epoch) / 3600;
   if (h < 1) return `${Math.round(h * 60)} min`;
   if (h < 48) return `${Math.round(h)} h`;
-  return `${Math.round(h / 24)} j`;
+  return `${Math.round(h / 24)} d`;
 };
 
 export const fmtDT = (epoch: number) =>
-  new Date(epoch * 1000).toLocaleString("fr-FR", {
+  new Date(epoch * 1000).toLocaleString("en-GB", {
     day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
   });
 
@@ -19,8 +19,8 @@ export const host = (u: string) => {
 };
 
 export const degToCard = (d: number) =>
-  ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO",
-    "O", "ONO", "NO", "NNO"][Math.round(d / 22.5) % 16];
+  ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW",
+    "W", "WNW", "NW", "NNW"][Math.round(d / 22.5) % 16];
 
 export const scoreClass = (s: number | null | undefined) =>
   s == null ? "sc-low" : s >= 80 ? "sc-crit" : s >= 60 ? "sc-high" : s >= 40 ? "sc-mid" : "sc-low";
@@ -32,7 +32,7 @@ export const VIG_COLORS: Record<number, string> = {
   1: "#2e7d32", 2: "#f9d71c", 3: "#f57c00", 4: "#d32f2f",
 };
 export const DANGER_LABELS: Record<number, string> = {
-  1: "Faible", 2: "Modéré", 3: "Élevé", 4: "Très élevé",
+  1: "Low", 2: "Moderate", 3: "High", 4: "Very high",
 };
 
 export type Cluster = {

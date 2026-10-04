@@ -128,7 +128,7 @@ export async function renderChoro(
   };
   const tipFor = (code: string, nom: string) => {
     if (mode === "activity")
-      return `${nom} (${code}) — ${Math.round(frpByDept[code] || 0).toLocaleString("fr-FR")} MW`;
+      return `${nom} (${code}) — ${Math.round(frpByDept[code] || 0).toLocaleString("en-GB")} MW`;
     if (mode === "vigilance") {
       const d = vigD[code];
       const names = ["", "verte", "jaune", "orange", "rouge"];
@@ -172,13 +172,13 @@ export function renderStations(ctx: MapCtx, clusters: Cluster[], show: boolean) 
       </div>`,
     });
     L.marker([st.lat, st.lon], { icon })
-      .bindTooltip(`${st.name} — vent mesuré ${cur.wind_kmh} km/h, rafales ${cur.gust_kmh} km/h`)
+      .bindTooltip(`${st.name} — measured wind ${cur.wind_kmh} km/h, gusts ${cur.gust_kmh} km/h`)
       .addTo(ctx.stationsLayer);
   }
   ctx.stationsLayer.addTo(ctx.map);
 }
 
-/** Trajectoire de propagation 6 h (vents AROME chaînés, départ vent mesuré). */
+/** Trajectoire de propagation 6 h (vents AROME chaînés, départ measured wind). */
 export function drawCone(ctx: MapCtx, c: Cluster | null, weather: any) {
   ctx.coneLayer.clearLayers();
   if (!c || !weather) return;
@@ -236,7 +236,7 @@ export async function syncWind(ctx: MapCtx, on: boolean, cursor: number | null) 
   if (data.error || !on) return;
   ctx.windLayer = (L as any).velocityLayer({
     data, displayValues: true,
-    displayOptions: { velocityType: "vent", position: "bottomleft",
+    displayOptions: { velocityType: "wind", position: "bottomleft",
       emptyString: "—", speedUnit: "k/h", showCardinal: true },
     maxVelocity: 18, velocityScale: 0.01,
     particleAge: 55, particleMultiplier: 1 / 700, lineWidth: 1.1, frameRate: 12,
@@ -265,9 +265,9 @@ const AQI_STOPS: [number, number, number, number, number][] = [
   [80, 255, 122, 40, 0.55], [100, 255, 45, 30, 0.68], [130, 150, 60, 220, 0.78],
 ];
 const AQI_LEVELS: [number, string, string][] = [
-  [20, "bon", "#50c878"], [40, "moyen", "#a3d977"], [60, "dégradé", "#f9d71c"],
-  [80, "mauvais", "#ff5a2c"], [100, "très mauvais", "#ff2d1e"],
-  [9999, "extrêmement mauvais", "#9640dc"],
+  [20, "good", "#50c878"], [40, "fair", "#a3d977"], [60, "moderate", "#f9d71c"],
+  [80, "poor", "#ff5a2c"], [100, "very poor", "#ff2d1e"],
+  [9999, "extremely poor", "#9640dc"],
 ];
 
 function aqiColor(aqi: number): number[] {
@@ -335,7 +335,7 @@ export async function syncAir(ctx: MapCtx, on: boolean): Promise<boolean> {
       interactive: false, zIndexOffset: 2000,
       icon: L.divIcon({ className: "", iconSize: [0, 0], iconAnchor: [-14, 18],
         html: `<div class="air-label" style="border-left-color:${color}">
-            <div class="alt">Qualité de l'air estimée</div>
+            <div class="alt">Estimated air quality</div>
             <div class="alv"><b>${Math.round(m.v)}</b>${label}</div></div>` }),
     }));
   }
@@ -378,8 +378,8 @@ export async function syncAircraft(ctx: MapCtx, on: boolean, cursor: number | nu
     L.marker([last.lat, last.lon], { icon, zIndexOffset: 3000 })
       .bindPopup(`<b>${esc(f.callsign)}</b> · ${esc(f.reg)}<br>${esc(f.type_name)}` +
         `${f.operator && f.operator !== "?" ? " · " + esc(f.operator) : ""}<br>` +
-        `${f.airborne ? "En vol" : "Au sol / signal perdu"} · alt ${Math.round((last.alt_ft || 0) * 0.3048)} m · ` +
-        `${Math.round((last.gs_kt || 0) * 1.852)} km/h<br>Position il y a ${ageMin} min`)
+        `${f.airborne ? "Airborne" : "On ground / signal lost"} · alt ${Math.round((last.alt_ft || 0) * 0.3048)} m · ` +
+        `${Math.round((last.gs_kt || 0) * 1.852)} km/h<br>Position ${ageMin} min ago`)
       .addTo(ctx.aircraftLayer);
   }
 }

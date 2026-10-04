@@ -15,32 +15,32 @@ export default function AiSummary({ c, range }: { c: Cluster; range: string }) {
   }, [c.id, range]);
 
   if (!d) return (
-    <div className="ai-box"><div className="ai-t">◈ SYNTHÈSE IA</div><div className="loading-bar" /></div>
+    <div className="ai-box"><div className="ai-t">◈ AI SUMMARY</div><div className="loading-bar" /></div>
   );
   if (d.error === "no_key") return null;
   if (d.error === "budget") return (
     <div className="ai-box">
-      <div className="ai-t">◈ SYNTHÈSE IA</div>
+      <div className="ai-t">◈ AI SUMMARY</div>
       <div className="intel-msg" style={{ padding: "4px 0" }}>
-        {d.detail || "Budget IA du jour épuisé"} — pas encore de synthèse en base pour ce foyer.
+        {d.detail || "Daily AI budget exhausted"} — no summary archived for this fire yet.
       </div>
     </div>
   );
   if (d.error) return (
-    <div className="ai-box"><div className="ai-t">◈ SYNTHÈSE IA</div>
+    <div className="ai-box"><div className="ai-t">◈ AI SUMMARY</div>
       <div className="intel-msg">{d.error}</div></div>
   );
   const gen = d.generated_at
-    ? new Date(d.generated_at).toLocaleString("fr-FR",
+    ? new Date(d.generated_at).toLocaleString("en-GB",
       { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
     : "";
   return (
     <div className="ai-box">
       <div className="ai-t">
-        ◈ SYNTHÈSE IA{" "}
+        ◈ AI SUMMARY{" "}
         <span style={{ color: "var(--dim)", letterSpacing: 0, fontWeight: 400 }}>
           {d.model || ""}{gen ? ` · ${gen}` : ""}
-          {d.stale ? " · budget du jour épuisé, dernière version" : ""}
+          {d.stale ? " · daily budget exhausted, latest version" : ""}
         </span>
       </div>
       <div className="ai-r">{d.resume}</div>

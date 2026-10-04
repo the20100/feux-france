@@ -19,7 +19,7 @@ import type { Cluster } from "./format";
 const REFRESH_MS = 60 * 60 * 1000; // rafraîchissement automatique horaire
 
 export default function WarRoom() {
-  const [range, setRange] = useState("7d");
+  const [range, setRange] = useState(() => { try { const r=sessionStorage.getItem("omni-feux-range"); return ["24h","48h","7d"].includes(r || "") ? r! : "7d"; } catch { return "7d"; } });
   const [clusters, setClusters] = useState<Cluster[]>([]);
   const [fires, setFires] = useState<any[]>([]);
   const [mfForets, setMfForets] = useState<any>(null);
@@ -35,6 +35,7 @@ export default function WarRoom() {
   const [statsOpen, setStatsOpen] = useState(false);
   const [airLegend, setAirLegend] = useState(false);
   const [refreshAt, setRefreshAt] = useState(Date.now() + REFRESH_MS);
+  useEffect(() => { try { sessionStorage.setItem("omni-feux-range",range); } catch {} }, [range]);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
 
@@ -63,7 +64,7 @@ export default function WarRoom() {
         cl.clusters.filter((c: Cluster) => !seen.has(c.id) && c.frp > 8).slice(0, 5)
           .forEach((c: Cluster) => {
             c.isNew = true;
-            pushToast({ id: `new-${c.id}`, title: "NOUVEAU FOYER DÉTECTÉ",
+            pushToast({ id: `new-${c.id}`, title: "NEW FIRE CLUSTER DETECTED",
               msg: `${c.name}${c.dept ? ` (${c.dept})` : ""} — FRP ${c.frp} MW`, clusterId: c.id });
           });
       }
@@ -73,7 +74,7 @@ export default function WarRoom() {
           .filter(([, v]) => v >= 4).map(([d]) => d);
         const dk = `toast_danger4_${today}`;
         if (bad.length && !localStorage.getItem(dk)) {
-          pushToast({ id: dk, title: "DANGER FEUX TRÈS ÉLEVÉ DEMAIN", msg: `Départements : ${bad.join(", ")}` });
+          pushToast({ id: dk, title: "VERY HIGH FIRE DANGER TOMORROW", msg: `Departments: ${bad.join(", ")}` });
           localStorage.setItem(dk, "1");
         }
       }
@@ -82,8 +83,8 @@ export default function WarRoom() {
         .slice(0, 3).forEach((c: Cluster) => {
           const k = `toast_cocktail_${c.id}_${today}`;
           if (!localStorage.getItem(k)) {
-            pushToast({ id: k, title: "⚠ COCKTAIL VENT + CANICULE",
-              msg: `${c.name} (${c.dept}) — vigilances orange combinées`, clusterId: c.id });
+            pushToast({ id: k, title: "⚠ COCKTAIL WIND + CANICULE",
+              msg: `${c.name} (${c.dept}) — combined orange warnings`, clusterId: c.id });
             localStorage.setItem(k, "1");
           }
         });
@@ -92,7 +93,7 @@ export default function WarRoom() {
     setClusters(cl.clusters);
     setFires(fi.features);
     const times = fi.features.map((f: any) => f.properties.t);
-    setTl((cur) => ({ ...cur, min: Math.min(...times), max: Math.max(...times) }));
+    if (times.length) setTl((cur) => ({ ...cur, min: Math.min(...times), max: Math.max(...times) }));
     if (selectedRef.current) {
       const again = cl.clusters.find((c: Cluster) => c.id === selectedRef.current!.id);
       if (again) setSelected(again);
@@ -101,13 +102,13 @@ export default function WarRoom() {
   }, [pushToast]);
 
   useEffect(() => {
-    loadAll(range);
+    loadAll(range).catch(() => pushToast({ id: "load-error", title: "DATA UNAVAILABLE", msg: "Fire data could not be loaded. The latest available data remains displayed." }));
   }, [range, loadAll]);
 
   // rafraîchissement automatique horaire
   useEffect(() => {
     const iv = setInterval(() => {
-      if (Date.now() >= refreshAt && !document.hidden) loadAll(range);
+      if (Date.now() >= refreshAt && !document.hidden) { setRefreshAt(Date.now() + 60000); loadAll(range).catch(() => {}); }
     }, 5000);
     return () => clearInterval(iv);
   }, [refreshAt, range, loadAll]);

@@ -16,6 +16,9 @@ services:
     environment:
       # Toutes ces clés sont facultatives par conception : chaque fonctionnalité
       # se désactive proprement si la sienne est absente (cf. README).
+      OMNI_WORKER_ENABLED: "0"
+      CARTO_API_KEY: ${CARTO_API_KEY:-}
+      CARTO_MAP_ORIGIN: ${CARTO_MAP_ORIGIN:-https://omni.vima.work}
       EXA_API_KEY: ${EXA_API_KEY:-}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
       OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
@@ -73,6 +76,36 @@ services:
       - internal
     mem_limit: 128m
 
+  omni-worker:
+    build:
+      context: .
+      target: omni-worker
+    restart: unless-stopped
+    init: true
+    environment:
+      OMNI_TERRITORY_FEED_URL: ${OMNI_TERRITORY_FEED_URL:-}
+    volumes:
+      - feux-data:/app/data
+    networks:
+      - internal
+    mem_limit: 768m
+
+  omni-backup:
+    build:
+      context: .
+      target: omni-worker
+    restart: unless-stopped
+    init: true
+    command: ["node", "scripts/backup-daemon.mjs"]
+    environment:
+      OMNI_BACKUP_DIR: /app/backups
+    volumes:
+      - feux-data:/app/data:ro
+      - omni-backups:/app/backups
+    networks:
+      - internal
+    mem_limit: 256m
+
 networks:
   dokploy-network:
     external: true
@@ -84,3 +117,6 @@ volumes:
   # `docker volume create` oublié ferait échouer tout le déploiement.
   feux-data:
     name: feux-data
+
+  omni-backups:
+    name: omni-backups

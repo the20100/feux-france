@@ -164,7 +164,7 @@ async function computeScores(clusters: any[]): Promise<void> {
         rh = cur.relative_humidity_2m ?? null;
         c.wind = Math.round(cur.wind_speed_10m || 0);
         c.wind_dir = cur.wind_direction_10m;
-        c.wind_src = "modèle";
+        c.wind_src = "model";
       }
     }
     if (gusts != null) {
@@ -209,7 +209,7 @@ export async function getClusters(rangeKey: string): Promise<any[]> {
       c.commune ??= null;
       c.dept ??= null;
       c.dept_name = DEPTS[c.dept || ""] ?? null;
-      c.name = c.commune ? `Feu de ${c.commune}` : `Foyer ${c.lat.toFixed(2)}N ${c.lon.toFixed(2)}E`;
+      c.name = c.commune ? `Fire near ${c.commune}` : `Fire cluster ${c.lat.toFixed(2)}N ${c.lon.toFixed(2)}E`;
     }
     detectReprises(clusters);
     await computeScores(clusters);

@@ -18,26 +18,26 @@ export default function EnjeuxBlock({ c }: { c: Cluster }) {
   }, [c.id]);
 
   if (!expo) return <div id="enjeux"><div className="loading-bar" /></div>;
-  if (expo.error) return <div id="enjeux"><div className="intel-msg">Enjeux indisponibles.</div></div>;
+  if (expo.error) return <div id="enjeux"><div className="intel-msg">Exposure data unavailable.</div></div>;
 
   return (
     <div id="enjeux">
       <div className="expo-head">
-        <b>{fmtInt(expo.total_pop)}</b> habitants · <b>{expo.n_communes}</b> commune{expo.n_communes > 1 ? "s" : ""} dans un rayon de 10 km
+        <b>{fmtInt(expo.total_pop)}</b> residents · <b>{expo.n_communes}</b> {expo.n_communes > 1 ? "municipalities" : "municipality"} within 10 km
       </div>
       {expo.communes.slice(0, 5).map((x: any, i: number) => (
         <div key={i} className="mini-row">
           <span>{x.nom} <span className="k">({x.dept})</span></span>
-          <span className="k">{fmtInt(x.population)} hab · {x.dist_km} km</span>
+          <span className="k">{fmtInt(x.population)} residents · {x.dist_km} km</span>
         </div>
       ))}
       {infra?.error && (
-        <div className="intel-msg">Infrastructures : source indisponible.</div>
+        <div className="intel-msg">Infrastructure: source unavailable.</div>
       )}
       {infra?.items?.length > 0 && (
         <>
           <div style={{ marginTop: 9, fontSize: 9, letterSpacing: ".12em", color: "var(--muted)" }}>
-            SITES SENSIBLES À 3 KM (OSM)
+            SENSITIVE SITES WITHIN 3 KM (OSM)
           </div>
           {infra.items.slice(0, 8).map((x: any, i: number) => (
             <div key={i} className="mini-row">
@@ -49,7 +49,7 @@ export default function EnjeuxBlock({ c }: { c: Cluster }) {
       )}
       {infra && !infra.error && !infra.items?.length && (
         <div className="intel-msg" style={{ padding: "8px 0 0" }}>
-          Aucun site sensible recensé à 3 km.
+          No sensitive sites recorded within 3 km.
         </div>
       )}
     </div>

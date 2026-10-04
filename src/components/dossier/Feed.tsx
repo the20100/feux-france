@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { host, type Cluster } from "../format";
 
-const TYPE_LABEL: Record<string, string> = { press: "PRESSE", x: "SOCIAL", gouv: "ÉTAT", video: "VIDÉO" };
+const TYPE_LABEL: Record<string, string> = { press: "PRESS", x: "SOCIAL", gouv: "GOVERNMENT", video: "VIDEO" };
 const TABS = [
-  { key: "press", label: "Presse" }, { key: "x", label: "Social" },
-  { key: "gouv", label: "État" }, { key: "video", label: "Vidéos" },
+  { key: "press", label: "Press" }, { key: "x", label: "Social" },
+  { key: "gouv", label: "Government" }, { key: "video", label: "Videos" },
 ];
 
 function videoEmbed(url: string) {
@@ -35,7 +35,7 @@ export default function Feed({ c, exa }: { c: Cluster; exa: boolean }) {
       (c.dept_name ? `&dept=${encodeURIComponent(c.dept_name)}` : "") +
       (c.dept ? `&dept_code=${encodeURIComponent(c.dept)}` : "");
     fetch(url).then((r) => r.json()).then((d) => alive && setData(d))
-      .catch(() => alive && setData({ error: "Erreur de recherche." }));
+      .catch(() => alive && setData({ error: "Search failed." }));
     return () => { alive = false; };
   }, [c.id, exa]);
 
@@ -47,7 +47,7 @@ export default function Feed({ c, exa }: { c: Cluster; exa: boolean }) {
 
   if (!exa) return (
     <div className="intel-msg">
-      Clé Exa absente. Renseigner <code>EXA_API_KEY</code> dans <code>.env</code> puis relancer.
+      Exa key missing. Set <code>EXA_API_KEY</code> in <code>.env</code> and restart.
     </div>
   );
 
@@ -69,12 +69,12 @@ export default function Feed({ c, exa }: { c: Cluster; exa: boolean }) {
       </div>
       <div id="intel">
         {!data && <div className="loading-bar" />}
-        {data?.error && <div className="intel-msg">Erreur : {data.error}</div>}
+        {data?.error && <div className="intel-msg">Error: {data.error}</div>}
         {data && !data.error && !items.length && (
           <div className="intel-msg">
             {data.results.length
-              ? "Aucun résultat pour ces filtres."
-              : `Aucune source ne mentionne précisément ce foyer${data.dropped ? ` (${data.dropped} hors-sujet écartés)` : ""}.`}
+              ? "No results match these filters."
+              : `No source specifically mentions this fire${data.dropped ? ` (${data.dropped} unrelated results excluded)` : ""}.`}
           </div>
         )}
         {items.map((r: any, i: number) => <FeedItem key={r.url || i} r={r} />)}
@@ -88,7 +88,7 @@ function FeedItem({ r }: { r: any }) {
   const emb = videoEmbed(r.url || "");
   const bsky = r.type === "x" ? r.url?.match(/bsky\.app\/profile\/([^/]+)/)?.[1] : null;
   const fav = r.favicon || `https://www.google.com/s2/favicons?domain=${host(r.url)}&sz=32`;
-  const meta = `${host(r.url)}${r.date ? " · " + new Date(r.date).toLocaleDateString("fr-FR",
+  const meta = `${host(r.url)}${r.date ? " · " + new Date(r.date).toLocaleDateString("en-GB",
     { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : ""}`;
 
   return (

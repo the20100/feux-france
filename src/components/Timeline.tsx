@@ -42,11 +42,11 @@ export default function Timeline({ tl, onChange }: Props) {
             cursor: +e.target.value === 1000 ? null : tl.min + f * (tl.max - tl.min) });
         }} />
       <span id="tl-label">
-        {tl.cursor === null ? "DIRECT" :
-          new Date(tl.cursor * 1000).toLocaleString("fr-FR",
+        {tl.cursor === null ? "LIVE" :
+          new Date(tl.cursor * 1000).toLocaleString("en-GB",
             { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
       </span>
-      <span id="tl-live" title="Revenir au direct"
+      <span id="tl-live" title="Return to live"
         onClick={() => onChange({ ...tl, cursor: null, playing: false })}>● LIVE</span>
     </div>
   );

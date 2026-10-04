@@ -6,13 +6,13 @@ const AC_CALLSIGN = /^(PELICA|MILAN|DRAG|BENGA|CAN\d{2}|HR8\d{2})/i;
 const AC_REG = /^(F-?ZB|I-?DPC)/i;
 const AC_TYPES: Record<string, string> = {
   CL2T: "Canadair CL-415", AT8T: "AT-802 Fire Boss", DH8D: "Dash 8 Q400MR",
-  EC45: "Hélico Dragon (EC145)", EC30: "Hélico Dragon (EC130)",
+  EC45: "Dragon helicopter (EC145)", EC30: "Dragon helicopter (EC130)",
   BE20: "Beech 200 (coordination)",
 };
 const OPERATORS: [RegExp, string][] = [
-  [/^F-?ZB/i, "Sécurité Civile 🇫🇷"],
+  [/^F-?ZB/i, "Civil Security 🇫🇷"],
   [/^I-?DPC/i, "Vigili del Fuoco 🇮🇹"],
-  [/^HR/i, "Force aérienne 🇭🇷"],
+  [/^HR/i, "Air Force 🇭🇷"],
 ];
 
 const OPENSKY_ID = (process.env.OPENSKY_CLIENT_ID || "").trim();

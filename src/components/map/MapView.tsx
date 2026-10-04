@@ -39,8 +39,9 @@ export default function MapView(props: Props) {
   useEffect(() => {
     const map = L.map(divRef.current!, { zoomControl: false }).setView([46.4, 2.6], 6);
     L.control.zoom({ position: "bottomright" }).addTo(map);
-    const baseDark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: "© OSM © CARTO · NASA FIRMS · Météo-France · Open-Meteo · Exa",
+    const baseDark = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · NASA FIRMS · Météo-France · Open-Meteo · Exa',
+      className: "feux-osm-base",
       maxZoom: 19,
     }).addTo(map);
     const baseSat = L.tileLayer(
@@ -49,6 +50,13 @@ export default function MapView(props: Props) {
     // StrictMode (dev) démonte/remonte l'effet : ne pas ajouter la couche
     // si la carte a été détruite entre-temps
     let disposed = false;
+    fetch('/api/omni/basemap').then(r=>r.json()).then(config=>{
+      if(disposed||!config.available)return;
+      baseDark.setUrl(config.template);
+      baseDark.options.attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © CARTO · NASA FIRMS';
+      map.attributionControl.addAttribution('© CARTO');
+      baseDark.once('tileerror',()=>{if(!disposed)baseDark.setUrl('https://tile.openstreetmap.org/{z}/{x}/{y}.png');});
+    }).catch(()=>{});
     fetch("/france-metropole.geojson").then((r) => r.json()).then((gj) => {
       if (!disposed)
         L.geoJSON(gj, { style: { color: "#324250", weight: 1, fill: false, opacity: 0.8 } }).addTo(map);
@@ -171,7 +179,7 @@ export default function MapView(props: Props) {
     }
   }, [props.layers.satellite]);
 
-  // zoom sur la sélection
+  // zoom sur this selection
   useEffect(() => {
     const c = ctx();
     const s = props.selected;

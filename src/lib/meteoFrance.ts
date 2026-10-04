@@ -36,7 +36,7 @@ async function mfGet(path: string, timeoutMs = 25000): Promise<ArrayBuffer> {
       }
     }
   }
-  throw new Error(`MF: échec (${lastErr})`);
+  throw new Error(`MF: failed (${lastErr})`);
 }
 
 // ------------------------------------------------------------ Météo des forêts
@@ -80,16 +80,16 @@ export async function getMfForets() {
 // ----------------------------------------------------------------- Vigilance
 
 export const VIG_PHENOMENES: Record<string, string> = {
-  "1": "Vent violent", "2": "Pluie-inondation", "3": "Orages", "4": "Crues",
-  "5": "Neige-verglas", "6": "Canicule", "7": "Grand froid", "8": "Avalanches",
-  "9": "Vagues-submersion",
+  "1": "Strong wind", "2": "Rain and flooding", "3": "Thunderstorms", "4": "River flooding",
+  "5": "Snow and ice", "6": "Heatwave", "7": "Extreme cold", "8": "Avalanches",
+  "9": "Coastal flooding",
 };
 
 /** Vigilance par département : niveau max + phénomènes avec créneau du pic.
  *  color_id : 1 vert, 2 jaune, 3 orange, 4 rouge. */
 export async function getMfVigilance() {
   if (!hasMf()) return { depts: {}, error: "no_token" };
-  const cached = miscGet("mf_vigilance", 900);
+  const cached = miscGet("mf_vigilance:en", 900);
   if (cached) return cached;
   let j: any;
   try {
@@ -123,7 +123,7 @@ export async function getMfVigilance() {
     d.orage = (levels["3"] || 1) >= 2;
   }
   const out = { depts, updated: j.product.update_time };
-  miscSet("mf_vigilance", out);
+  miscSet("mf_vigilance:en", out);
   return out;
 }
 
@@ -205,7 +205,7 @@ export async function getMfObs(lat: number, lon: number) {
     if (d < bd) { bd = d; best = s; }
   }
   if (bd > 40) {
-    const out = { error: "aucune station à moins de 40 km" };
+    const out = { error: "No station within 40 km" };
     miscSet(key, out);
     return out;
   }
@@ -216,7 +216,7 @@ export async function getMfObs(lat: number, lon: number) {
   } catch (e: any) {
     return { error: `obs: ${e.message}` };
   }
-  if (!recs?.length) return { error: "pas de données" };
+  if (!recs?.length) return { error: "No data" };
   const cur = recs.reduce((a, b) => ((a.validity_time || "") > (b.validity_time || "") ? a : b));
   let bascule = null;
   try {

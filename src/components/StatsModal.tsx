@@ -47,18 +47,18 @@ export default function StatsModal({ open, onClose }: { open: boolean; onClose: 
   return (
     <div id="statsmodal" className="open" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="stats-card">
-        <h2>STATISTIQUES NATIONALES</h2>
+        <h2>NATIONAL STATISTICS</h2>
         <div className="sub">
-          {data ? `Archives : ${data.season.fires ?? 0} foyers suivis · ${data.season.area_km2 ?? 0} km² d'emprise cumulée · ${data.season.history_days ?? 0} jour(s) d'historique` : "Chargement…"}
+          {data ? `Archive: ${data.season.fires ?? 0} tracked fire clusters · ${data.season.area_km2 ?? 0} km² total footprint · ${data.season.history_days ?? 0} days of history` : "Loading…"}
         </div>
-        <div className="sect">Détections par jour (30 j)</div>
+        <div className="sect">Daily detections (30 days)</div>
         <canvas id="dailychart" ref={canvasRef} />
-        <div className="sect">Classement départements (7 j)</div>
+        <div className="sect">Department ranking (7 days)</div>
         <table className="dept-table">
           <tbody>
-            <tr><th>Département</th><th style={{ textAlign: "right" }}>FRP (MW)</th>
-              <th style={{ textAlign: "right" }}>Foyers</th>
-              <th style={{ textAlign: "right" }}>Emprise</th><th style={{ width: "30%" }} /></tr>
+            <tr><th>Department</th><th style={{ textAlign: "right" }}>FRP (MW)</th>
+              <th style={{ textAlign: "right" }}>Fire clusters</th>
+              <th style={{ textAlign: "right" }}>Footprint</th><th style={{ width: "30%" }} /></tr>
             {(data?.depts || []).slice(0, 12).map((x: any) => (
               <tr key={x.dept}>
                 <td>{x.dept_name || x.dept} <span style={{ color: "var(--dim)" }}>({x.dept})</span></td>
@@ -70,10 +70,10 @@ export default function StatsModal({ open, onClose }: { open: boolean; onClose: 
             ))}
           </tbody>
         </table>
-        <div className="sect">Danger feux officiel demain (Météo-France)</div>
+        <div className="sect">Official fire danger tomorrow (Météo-France)</div>
         <div style={{ fontSize: 12 }}>
-          {data?.forets?.season === false && <span style={{ color: "var(--muted)" }}>Hors saison (juin-septembre).</span>}
-          {data?.forets?.season && !hot.length && <span style={{ color: "var(--muted)" }}>Aucun département au-dessus du niveau Modéré.</span>}
+          {data?.forets?.season === false && <span style={{ color: "var(--muted)" }}>Out of season (June–September).</span>}
+          {data?.forets?.season && !hot.length && <span style={{ color: "var(--muted)" }}>No department above Moderate risk.</span>}
           {hot.map(([dep, v]) => (
             <span key={dep} className="vig-chip" style={{ margin: "2px 4px 2px 0", display: "inline-flex" }}>
               <span className="vd" style={{ background: VIG_COLORS[v as number] }} />

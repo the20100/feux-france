@@ -14,17 +14,17 @@ export default function ClimatBlock({ c }: { c: Cluster }) {
   }, [c.id]);
 
   if (!d) return <div id="climat"><div className="loading-bar" /></div>;
-  if (d.error) return <div id="climat"><div className="intel-msg">Climatologie indisponible.</div></div>;
+  if (d.error) return <div id="climat"><div className="intel-msg">Climate data unavailable.</div></div>;
 
-  const mois = new Date().toLocaleDateString("fr-FR", { month: "long" });
+  const mois = new Date().toLocaleDateString("en-GB", { month: "long" });
   return (
     <div id="climat">
       <div className="climat-bars">
-        <Bar label={`Pluie de ${mois}`} cur={d.month.current} normal={d.month.normal} />
-        <Bar label="Pluie mars → juin (recharge)" cur={d.spring.current} normal={d.spring.normal} />
+        <Bar label={`${mois} rainfall`} cur={d.month.current} normal={d.month.normal} />
+        <Bar label="March → June rainfall (recharge)" cur={d.spring.current} normal={d.spring.normal} />
       </div>
       <div style={{ marginTop: 6, fontSize: 9.5, color: "var(--dim)" }}>
-        Normales 1991-2020 (ERA5) au point du foyer · trait cyan = normale
+        1991–2020 normals (ERA5) at the fire location · cyan line = normal
       </div>
     </div>
   );
@@ -41,7 +41,7 @@ function Bar({ label, cur, normal }: { label: string; cur: number; normal: numbe
         <span>
           <b style={{ color: pct < -30 ? "var(--red)" : pct < 0 ? "var(--fire2)" : "var(--green)" }}>
             {cur} mm</b>{" "}
-          <span style={{ color: "var(--dim)" }}>/ normale {normal} mm ({pct >= 0 ? "+" : ""}{pct}%)</span>
+          <span style={{ color: "var(--dim)" }}>/ normal {normal} mm ({pct >= 0 ? "+" : ""}{pct}%)</span>
         </span>
       </div>
       <div className="cb-track">

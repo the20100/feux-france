@@ -48,7 +48,7 @@ export default function SatelliteView({ c }: { c: Cluster }) {
       <div id="satmap" ref={divRef} />
       <div className="satctl">
         <select value={layer} onChange={(e) => setLayer(e.target.value)}>
-          <option value="viirs">VIIRS 375 m (quotidien)</option>
+          <option value="viirs">VIIRS 375 m (daily)</option>
           <option value="l30">Landsat HLS 30 m</option>
           <option value="s30">Sentinel-2 HLS 30 m</option>
         </select>
@@ -57,7 +57,7 @@ export default function SatelliteView({ c }: { c: Cluster }) {
         <button onClick={() => step(1)}>▶</button>
       </div>
       <div className="satnote">
-        NASA GIBS — image noire/vide = pas d'acquisition ce jour-là (revisite 2-5 j pour le 30 m).
+        NASA GIBS — black/empty image = no acquisition that day (2–5 day revisit for 30 m imagery).
       </div>
     </div>
   );

@@ -31,12 +31,12 @@ export default function Sidebar({ clusters, selectedId, onSelect, search, onSear
   return (
     <aside id="sidebar">
       <div className="head">
-        <div className="title">Foyers détectés</div>
-        <input id="search" placeholder="Filtrer par commune, département…"
+        <div className="title">Detected fire clusters</div>
+        <input id="search" placeholder="Filter by municipality, department…"
           value={search} onChange={(e) => onSearch(e.target.value)} />
         <div className="sorttog">
-          <button className={sort === "score" ? "active" : ""} onClick={() => setSort("score")}>⚠ MENACE</button>
-          <button className={sort === "frp" ? "active" : ""} onClick={() => setSort("frp")}>🔥 INTENSITÉ</button>
+          <button className={sort === "score" ? "active" : ""} onClick={() => setSort("score")}>⚠ THREAT</button>
+          <button className={sort === "frp" ? "active" : ""} onClick={() => setSort("frp")}>🔥 INTENSITY</button>
         </div>
       </div>
       <div id="firelist">
@@ -53,25 +53,25 @@ function FireRow({ c, rank, maxFrp, selected, onSelect }:
   { c: Cluster; rank: number; maxFrp: number; selected: boolean; onSelect: () => void }) {
   return (
     <div className={`fire-row ${c.active ? "" : "cooling"} ${selected ? "sel" : ""}`} onClick={onSelect}>
-      {c.isNew && <span className="badge-new">NOUVEAU</span>}
+      {c.isNew && <span className="badge-new">NEW</span>}
       <div className="r1">
         <span className="rank">{String(rank).padStart(2, "0")}</span>
         <span className="nm">{c.name}</span>
-        {c.reprise && <span className="badge-reprise">⟳ REPRISE</span>}
+        {c.reprise && <span className="badge-reprise">⟳ REIGNITION</span>}
         {(c.danger_j1 ?? 0) >= 3 && (
-          <span title={`Danger feux ${DANGER_LABELS[c.danger_j1!]} demain`}
+          <span title={`Fire danger ${DANGER_LABELS[c.danger_j1!]} tomorrow`}
             style={{ color: VIG_COLORS[c.danger_j1!], fontSize: 10 }}>▲</span>
         )}
-        {c.vig?.cocktail && <span title="Vigilances vent + canicule">⚠</span>}
+        {c.vig?.cocktail && <span title="Wind + heatwave warnings">⚠</span>}
         {c.dept && <span className="badge-dept">{c.dept}</span>}
-        <span className={`score-pill ${scoreClass(c.score)}`} title="Score de menace">{c.score ?? "–"}</span>
+        <span className={`score-pill ${scoreClass(c.score)}`} title="Threat score">{c.score ?? "–"}</span>
         <span className="frp">{frpLabel(c.frp)}</span>
       </div>
       <div className="r2">
-        <span>{c.n} détect.</span>
-        <span>vu il y a {fmtAgo(c.last)}</span>
+        <span>{c.n} detections</span>
+        <span>last seen {fmtAgo(c.last)} ago</span>
         <span className={`trend-${c.trend}`}>
-          {c.trend === "up" ? "▲ intensification" : c.trend === "down" ? "▼ décroissance" : "― stable"}
+          {c.trend === "up" ? "▲ intensifying" : c.trend === "down" ? "▼ decreasing" : "― stable"}
         </span>
       </div>
       <div className="bar">

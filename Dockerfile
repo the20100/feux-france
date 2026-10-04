@@ -66,3 +66,13 @@ COPY docker/update-cron.sh /usr/local/bin/update-cron.sh
 RUN chmod +x /usr/local/bin/update-cron.sh
 USER node
 CMD ["/usr/local/bin/update-cron.sh"]
+
+# Autonomous OMNI collector and online backup tools. Same persistent volume as FEUX.
+FROM deps AS omni-worker
+WORKDIR /app
+ENV NODE_ENV=production
+COPY src/lib/omni ./src/lib/omni
+COPY scripts ./scripts
+RUN mkdir -p /app/data /app/backups && chown -R node:node /app/data /app/backups
+USER node
+CMD ["node", "scripts/omni-worker.mjs", "--daemon"]

@@ -1,3 +1,28 @@
+# OMNI — observatoire global
+
+Le projet FEUX devient un observatoire à quatre vues : **GLOBAL, FEUX, PANDEMIC et WAR**.
+
+- Navigation : `/`, `/feux`, `/pandemic`, `/war`.
+- Hantavirus et veille peste, bulletins OMS/ReliefWeb, sources et statuts explicites.
+- Sept théâtres de conflit ; évaluations territoriales VIINA pour l’Ukraine avec chronologie et export GeoJSON.
+- Historique versionné, collecte autonome, sauvegardes SQLite vérifiées.
+- CARTO via proxy côté serveur ; fond mondial Natural Earth embarqué en secours.
+
+**[Documentation OMNI : exploitation, données, licences et limites](docs/OMNI.md)**.
+
+```sh
+npm install
+npm run dev       # http://localhost:8742
+npm test
+npm run backup
+```
+
+Le volume `feux-data` et l’historique incendies sont conservés. La nouvelle base est `data/omni.db` ; l’ancienne reste `data/feux.db`. Les sauvegardes de production utilisent `omni-backups`. La réplication hors serveur reste à configurer.
+
+Le détail du module FEUX figure ci-dessous ; sa page est désormais `/feux`.
+
+---
+
 # 🔥 FEUX FRANCE
 
 Plateforme de suivi **temps réel des feux de forêt en France** : détection

@@ -15,13 +15,13 @@ const OVERPASS_QUERY = `[out:json][timeout:20];
 out center 60;`;
 
 const INFRA_LABELS: Record<string, string> = {
-  school: "École", kindergarten: "Crèche/maternelle", hospital: "Hôpital",
-  clinic: "Clinique", fire_station: "Caserne pompiers", camp_site: "Camping",
-  nursing_home: "EHPAD", assisted_living: "Résidence seniors",
+  school: "School", kindergarten: "Nursery / kindergarten", hospital: "Hospital",
+  clinic: "Clinic", fire_station: "Fire station", camp_site: "Campsite",
+  nursing_home: "Nursing home", assisted_living: "Assisted living",
 };
 
 export async function getInfra(lat: number, lon: number, radiusM = 3000) {
-  const key = `infra:${lat.toFixed(2)},${lon.toFixed(2)},${radiusM}`;
+  const key = `infra:en:${lat.toFixed(2)},${lon.toFixed(2)},${radiusM}`;
   const cached = miscGet(key, 86400);
   if (cached) return cached;
   const q = OVERPASS_QUERY.replaceAll("{r}", String(radiusM))

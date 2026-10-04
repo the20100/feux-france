@@ -34,22 +34,22 @@ export default function Dossier({ fire, range, mfForets, openrouter, exa, onClos
             <div className="dsub">
               {c.dept_name ? `${c.dept_name} (${c.dept}) · ` : ""}
               {c.lat.toFixed(4)}N {c.lon.toFixed(4)}E
-              {c.population ? ` · commune ${fmtInt(c.population)} hab.` : ""}
+              {c.population ? ` · municipality: ${fmtInt(c.population)} residents` : ""}
             </div>
             <div className="status-badges">
               <span className={`score-pill ${scoreClass(c.score)}`}
-                style={{ fontSize: 12, padding: "2px 8px" }} title="Score de menace">
-                MENACE {c.score ?? "–"}/100
+                style={{ fontSize: 12, padding: "2px 8px" }} title="Threat score">
+                THREAT {c.score ?? "–"}/100
               </span>
               <span className={`sbadge ${c.active ? "actif" : "cool"}`}>
-                {c.active ? "● ACTIF" : "REFROIDISSEMENT"}
+                {c.active ? "● ACTIVE" : "COOLING"}
               </span>
               <span className={`sbadge ${c.trend}`}>
-                {c.trend === "up" ? "▲ INTENSIFICATION" : c.trend === "down" ? "▼ DÉCROISSANCE" : "― STABLE"}
+                {c.trend === "up" ? "▲ INTENSIFYING" : c.trend === "down" ? "▼ DECREASING" : "― STABLE"}
               </span>
               {c.reprise && (
                 <span className="badge-reprise" style={{ fontSize: 10, padding: "2px 6px" }}>
-                  ⟳ REPRISE APRÈS 48 H+
+                  ⟳ REIGNITION AFTER 48 H+
                 </span>
               )}
             </div>
@@ -57,20 +57,20 @@ export default function Dossier({ fire, range, mfForets, openrouter, exa, onClos
           <div id="dbody">
             <div className="sect">Situation</div>
             <Situation c={c} range={range} />
-            <div className="sect">Risque officiel — Météo-France</div>
+            <div className="sect">Official risk — Météo-France</div>
             <RisqueBlock c={c} season={mfForets?.season} />
-            <div className="sect">Météo sur zone</div>
+            <div className="sect">Local weather</div>
             <MeteoBlock c={c} onWeather={onWeather} />
-            <div className="sect">Contexte climatique</div>
+            <div className="sect">Climate context</div>
             <ClimatBlock c={c} />
-            <div className="sect">Enjeux — population &amp; infrastructures</div>
+            <div className="sect">Exposure — population &amp; infrastructure</div>
             <EnjeuxBlock c={c} />
-            <div className="sect">Imagerie satellite</div>
+            <div className="sect">Satellite imagery</div>
             <SatelliteView c={c} />
-            <div className="sect">Renseignement — sources ouvertes</div>
+            <div className="sect">Open-source intelligence</div>
             {openrouter && <AiSummary c={c} range={range} />}
             <Feed c={c} exa={exa} />
-            <div className="sect">Imagerie &amp; liens</div>
+            <div className="sect">Imagery &amp; links</div>
             <ExtLinks c={c} />
           </div>
         </>
@@ -104,17 +104,17 @@ function Situation({ c, range }: { c: Cluster; range: string }) {
     <>
       <div className="statgrid">
         <Stat v={c.frp >= 1000 ? `${(c.frp / 1000).toFixed(2)} ` : `${c.frp} `}
-          unit={c.frp >= 1000 ? "GW" : "MW"} l="FRP cumulée" />
+          unit={c.frp >= 1000 ? "GW" : "MW"} l="Total FRP" />
         <Stat v={`${c.frp_max} `} unit="MW" l="FRP max / pixel" />
-        <Stat v={String(c.n)} l="Détections" />
-        <Stat v={c.area_km2 ? `${c.area_km2} ` : "< 0.1 "} unit="km²" l="Emprise estimée" />
-        <Stat v={fmtDT(c.first)} l="1re détection" />
-        <Stat v={fmtDT(c.last)} unit={`(${fmtAgo(c.last)})`} l="Dernier passage" />
+        <Stat v={String(c.n)} l="Detections" />
+        <Stat v={c.area_km2 ? `${c.area_km2} ` : "< 0.1 "} unit="km²" l="Estimated footprint" />
+        <Stat v={fmtDT(c.first)} l="First detection" />
+        <Stat v={fmtDT(c.last)} unit={`(${fmtAgo(c.last)})`} l="Latest overpass" />
       </div>
       <canvas id="spark" ref={sparkRef} />
       <div className="sparkcap">
-        <span>-{range === "7d" ? "7 j" : range === "48h" ? "48 h" : "24 h"}</span>
-        <span>FRP / 6 h</span><span>maintenant</span>
+        <span>-{range === "7d" ? "7 d" : range === "48h" ? "48 h" : "24 h"}</span>
+        <span>FRP / 6 h</span><span>now</span>
       </div>
     </>
   );
@@ -141,7 +141,7 @@ function ExtLinks({ c }: { c: Cluster }) {
         Sentinel-2 ↗</a>
       <a target="_blank" rel="noopener" href={`https://www.google.com/maps/@${c.lat},${c.lon},12z`}>
         Google Maps ↗</a>
-      <a target="_blank" rel="noopener" href="https://vigilance.meteofrance.fr/fr">Vigilance MF ↗</a>
+      <a target="_blank" rel="noopener" href="https://vigilance.meteofrance.fr/fr">Météo-France warnings ↗</a>
     </div>
   );
 }

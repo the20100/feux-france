@@ -18,8 +18,8 @@ const hostOf = (u: string) => { try { return new URL(u).hostname; } catch { retu
 export async function getSummary(fid: string, rangeKey: string) {
   if (!OPENROUTER_KEY) return { error: "no_key" };
   const fire = (await getClusters(rangeKey)).find((c) => c.id === fid);
-  if (!fire) return { error: "foyer inconnu" };
-  const key = `summary:${fid}`;
+  if (!fire) return { error: "Unknown fire cluster" };
+  const key = `summary:en:${fid}`;
   const cached = miscGet(key, AI_TTL);
   if (cached) return cached;
 
@@ -29,7 +29,7 @@ export async function getSummary(fid: string, rangeKey: string) {
   if (budget.n >= AI_DAILY_BUDGET) {
     const stale = miscGet(key, 30 * 86400);
     if (stale) return { ...stale, stale: true };
-    return { error: "budget", detail: `budget IA du jour épuisé (${AI_DAILY_BUDGET} synthèses/j)` };
+    return { error: "budget", detail: `Daily AI budget exhausted (${AI_DAILY_BUDGET} summaries/day)` };
   }
 
   const q = fire.commune ? `${fire.commune} ${fire.dept_name || ""}`.trim() : fire.dept_name || "";
@@ -40,15 +40,14 @@ export async function getSummary(fid: string, rangeKey: string) {
   const lines = feed.results.slice(0, 12).map((r: any) =>
     `- [${r.type}] ${(r.date || "").slice(0, 16)} ${hostOf(r.url)} : ${r.title} — ${(r.text || "").slice(0, 200)}`);
   const prompt =
-    `Foyer d'incendie détecté par satellite : ${fire.name} (${fire.dept_name || "?"}), ` +
-    `FRP cumulée ${fire.frp} MW, ${fire.n} détections, 1re détection ${fmt(fire.first)}, ` +
-    `dernier passage ${fmt(fire.last)}.\n\nSources ouvertes collectées :\n${lines.join("\n")}\n\n` +
-    `En te basant UNIQUEMENT sur ces sources, réponds en JSON strict :\n` +
-    `{"resume": "synthèse factuelle en 3 phrases max, en français",\n` +
-    ` "chiffres": [{"label": "hectares brûlés|évacués|pompiers|maisons détruites|...",` +
-    ` "valeur": "…", "source": "domaine"}]}\n` +
-    `N'invente aucun chiffre : uniquement ceux présents dans les sources. ` +
-    `Si les sources ne parlent pas de ce feu précis, dis-le dans le résumé.`;
+    `Satellite-detected fire: ${fire.name} (${fire.dept_name || "?"}), ` +
+    `total FRP ${fire.frp} MW, ${fire.n} detections, first detection ${fmt(fire.first)}, ` +
+    `latest overpass ${fmt(fire.last)}.\n\nCollected sources:\n${lines.join("\n")}\n\n` +
+    `Based ONLY on these sources, return strict JSON. Write all text values in English, even when sources are in another language. Keep these JSON keys:\n` +
+    `{"resume": "factual summary in at most 3 sentences, in English",` +
+    ` "chiffres": [{"label": "hectares burned|evacuees|firefighters|homes destroyed|...", "valeur": "…", "source": "domain"}]}\n` +
+    `Never invent figures: use only figures found in the sources. ` +
+    `If sources do not discuss this specific fire, state this in the summary.`;
 
   let out: any;
   try {

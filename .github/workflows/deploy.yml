@@ -30,6 +30,9 @@ jobs:
       - name: Installation
         run: npm ci
 
+      - name: Tests des archives et collectes
+        run: npm test
+
       - name: Typecheck
         run: npm run typecheck
 

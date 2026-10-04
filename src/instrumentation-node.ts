@@ -12,6 +12,7 @@ import { aircraftTick } from "./lib/aircraft";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function startWorkers() {
+  if (process.env.NEXT_PHASE === "phase-production-build") return;
   const g = globalThis as any;
   if (g.__feuxWorkersStarted) return; // hot-reload de next dev
   g.__feuxWorkersStarted = true;
@@ -44,6 +45,19 @@ export function startWorkers() {
       await sleep(airborne ? 120000 : 900000);
     }
   })();
+
+  // Production uses the dedicated worker container. Local dev collects without a visitor.
+  if (process.env.OMNI_WORKER_ENABLED !== "0") {
+    (async () => {
+      const { openStore } = await import("./lib/omni/store.mjs");
+      const { syncSources } = await import("./lib/omni/collect.mjs");
+      const store = openStore();
+      for (;;) {
+        await syncSources(store).catch((e) => console.warn("OMNI:", e.message));
+        await sleep(60000);
+      }
+    })().catch((e) => console.warn("OMNI worker:", e.message));
+  }
 
   console.log("FEUX FRANCE — tâches de fond démarrées");
 }

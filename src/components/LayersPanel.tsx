@@ -35,25 +35,25 @@ export default function LayersPanel({ layers, choro, onLayers, onChoro }: Props)
   );
   return (
     <div id="layers">
-      <div className="t">Couches</div>
-      <div className="lgrp">Observé</div>
-      {box("hulls", "Contours des foyers")}
-      {box("hotspots", "Points chauds")}
+      <div className="t">Layers</div>
+      <div className="lgrp">Observed</div>
+      {box("hulls", "Fire cluster outlines")}
+      {box("hotspots", "Hotspots")}
       {box("heat", "Heatmap")}
-      {box("stations", "Vent mesuré (stations)")}
-      {box("aircraft", "Bombardiers d'eau ✈")}
-      <div className="lgrp">Risque — choroplèthe</div>
-      {radio("none", "Aucune")}
-      {radio("activity", "Activité feux")}
-      {radio("danger1", <>Danger forêts J+1 <span className="mfsrc">MF</span></>)}
-      {radio("danger2", <>Danger forêts J+2 <span className="mfsrc">MF</span></>)}
-      {radio("vigilance", <>Vigilance <span className="mfsrc">MF</span></>)}
-      <div className="lgrp">Météo</div>
-      {box("wind", "Vent (animation)")}
-      {box("rain", "Pluie (radar)", "Radar RainViewer — détail natif jusqu'au zoom 10, lissé au-delà")}
-      {box("air", "Qualité de l'air (PM2.5)")}
-      <div className="lgrp">Fond</div>
-      {box("labels", "Étiquettes")}
+      {box("stations", "Measured wind (stations)")}
+      {box("aircraft", "Firefighting aircraft ✈")}
+      <div className="lgrp">Risk — choropleth</div>
+      {radio("none", "None")}
+      {radio("activity", "Fire activity")}
+      {radio("danger1", <>Forest fire danger +1 day <span className="mfsrc">MF</span></>)}
+      {radio("danger2", <>Forest fire danger +2 days <span className="mfsrc">MF</span></>)}
+      {radio("vigilance", <>Warnings <span className="mfsrc">MF</span></>)}
+      <div className="lgrp">Weather</div>
+      {box("wind", "Wind (animation)")}
+      {box("rain", "Rain (radar)", "RainViewer radar — native detail to zoom 10, interpolated beyond")}
+      {box("air", "Air quality (PM2.5)")}
+      <div className="lgrp">Basemap</div>
+      {box("labels", "Labels")}
       {box("satellite", "Satellite")}
     </div>
   );

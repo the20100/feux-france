@@ -1,17 +1,23 @@
 {
-  "name": "feux-france",
+  "name": "omni-control",
   "version": "1.0.0",
   "private": true,
-  "description": "Plateforme de suivi temps réel des feux de forêt en France — détection satellite, risque officiel, météo, moyens aériens, renseignement en sources ouvertes.",
+  "description": "OMNI \u2014 observatoire g\u00e9ospatial FEUX, PANDEMIC et WAR, historique et sources.",
   "scripts": {
     "dev": "next dev -p 8742",
     "build": "next build",
     "start": "next start -p 8742",
     "update": "node scripts/update.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "omni:sync": "node scripts/omni-worker.mjs",
+    "omni:worker": "node scripts/omni-worker.mjs --daemon",
+    "omni:import": "node scripts/omni-import.mjs",
+    "backup": "node scripts/backup.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",
+    "fast-xml-parser": "^5.11.2",
     "leaflet": "^1.9.4",
     "leaflet-velocity": "^2.1.4",
     "leaflet.heat": "^0.2.0",
