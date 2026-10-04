@@ -6,7 +6,7 @@ import type {DashboardData,Domain,Observation} from './types';
 import {dateLabel,statusLabels} from './types';
 const WorldMap=dynamic(()=>import('./WorldMap'),{ssr:false,loading:()=> <div className="omni-map-loading">Loading map…</div>});
 const names={global:'A view of the world.',pandemic:'Health surveillance.',war:'Conflicts & territories.'};
-const subtitles={global:'Fires, health signals and conflict theatres on one timeline.',pandemic:'Distinguish signals, reports and confirmed counts.',war:'Seven theatres monitored. Dated reports and territorial assessments; coverage is not exhaustive.'};
+const subtitles={global:'Fires, health signals and conflict theatres on one timeline.',pandemic:'Distinguish signals, reports and confirmed counts.',war:'Monitored conflict theatres. Dated reports and territorial assessments; coverage is not exhaustive.'};
 const EMPTY:any[]=[];
 export default function Dashboard({domain}:{domain:Domain}) {
   const [data,setData]=useState<DashboardData|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);

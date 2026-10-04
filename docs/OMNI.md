@@ -127,3 +127,7 @@ Un volume distinct sur le même hôte **ne protège pas de la perte du serveur**
 Pour restaurer : arrêter l’app et les collecteurs, conserver une copie du volume courant, restaurer les deux bases d’un même répertoire de sauvegarde vérifiée dans le volume vide, démarrer et vérifier `/api/status` et `/api/omni`. Ne pas écraser une base active ni mélanger ses anciens fichiers WAL avec la sauvegarde. Un test automatisé restaure une sauvegarde contenant des écritures WAL et vérifie l’intégrité et les observations.
 
 La clé CARTO locale n’est pas transmise automatiquement à Dokploy. Pour déployer, la configurer dans le service avant le redéploiement. Le push sur `main` déclenche la CI et le webhook existants ; pas de changement de domaine ni suppression du volume historique.
+
+## Iran & Gulf
+
+WAR includes `iran-gulf`, covering Iran, Iraq, the Gulf states and the Strait of Hormuz. An hourly English UN News feed is filtered for regional security and humanitarian relevance; ReliefWeb searches all eight countries. Reports retain publication dates, attribution and revisions, without invented incident coordinates or territorial polygons. The UN feed is a rolling window, so initial coverage is not a complete conflict history.

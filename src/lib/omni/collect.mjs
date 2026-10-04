@@ -22,7 +22,7 @@ export async function fetchText(url, maxBytes = 8_000_000) {
 }
 export function parseReliefWeb(xml, topic) {
   const parsed = parser.parse(xml);
-  if (!parsed.rss?.channel) throw new Error('Flux RSS invalide');
+  if (!parsed.rss?.channel) throw new Error('Invalid RSS feed');
   const entries = parsed.rss.channel.item || [];
   return (Array.isArray(entries) ? entries : [entries]).flatMap(item => {
     const title = clean(item.title), url = safeUrl(item.link);
@@ -35,11 +35,32 @@ export function parseReliefWeb(xml, topic) {
 
 async function collectReliefWeb(db, source, get) {
   const topic = topics.find(t => t.id === source.topic);
-  const search = topic.domain === 'war' ? `country.exact:"${topic.country}"` : topic.id === 'hantavirus' ? 'hantavirus' : '"pneumonic plague" OR "bubonic plague"';
+  const search = topic.domain === 'war' ? (topic.countries || [topic.country]).map(country => `country.exact:"${country}"`).join(' OR ') : topic.id === 'hantavirus' ? 'hantavirus' : '"pneumonic plague" OR "bubonic plague"';
   const url = `https://reliefweb.int/updates/rss.xml?${new URLSearchParams({ search })}`;
   const observations = parseReliefWeb(await get(url), topic);
   // Store bibliographic metadata only: no republication of third-party report text.
   const docId = archiveDocument(db,source.id,url,observations);
+  return db.transaction(()=>observations.reduce((n,o)=>n+appendObservation(db,o,docId),0))();
+}
+// Require both regional relevance and a security/humanitarian subject. Never geocode
+// an article to the theatre centre: the centre is only a navigation marker.
+export function parseGulfNews(xml, now = new Date().toISOString()) {
+  const parsed = parser.parse(xml);
+  if (!parsed.rss?.channel) throw new Error('Invalid UN News RSS feed');
+  const items = parsed.rss.channel.item || [];
+  return (Array.isArray(items) ? items : [items]).flatMap(item => {
+    const title = clean(item.title), url = safeUrl(item.link);
+    const text = `${title} ${clean(item.description)}`;
+    if (!/\b(?:Iran(?:ian)?(?![- ]backed)|Hormuz|Persian Gulf|Gulf (?:States|region)|Oman|Kuwait|Bahrain|Qatar|Saudi Arabia|United Arab Emirates|Iraq)\b/i.test(text) || !/\b(?:war|conflict|attack|strike|hostilities|security|military|shipping|maritime|navigation|ceasefire|humanitarian|peace|diplomacy|nuclear|sanction|displaced|civilian|terrorism|tensions)\b/i.test(text)) return [];
+    if (!title || !url || new URL(url).hostname !== 'news.un.org' || !item.pubDate || !Number.isFinite(Date.parse(item.pubDate))) return [];
+    const publishedAt = iso(item.pubDate);
+    if (publishedAt > now) return [];
+    return [{sourceId:'un-news-iran-gulf',externalId:hash(url),domain:'war',topic:'iran-gulf',kind:'bulletin',title,summary:'UN News report concerning Iran and Gulf regional security. Consult the original for the reported events, attributed statements and humanitarian context. The timeline uses the publication date; this record does not establish territorial control.',url,occurredAt:publishedAt,publishedAt,status:'reported',location:'Iran & Gulf · regional coverage',lat:null,lon:null,precision:'not-geolocated',publisher:'UN News',contentHash:hash(clean(item.description))}];
+  });
+}
+async function collectGulfNews(db, source, get) {
+  const observations = parseGulfNews(await get(source.feedUrl));
+  const docId = archiveDocument(db,source.id,source.feedUrl,observations);
   return db.transaction(()=>observations.reduce((n,o)=>n+appendObservation(db,o,docId),0))();
 }
 async function collectWho(db, source, get) {
@@ -78,6 +99,7 @@ export async function syncSources(db, { force = false, only = null, get = fetchT
       let added = 0;
       if (source.connector === 'viina') added = await collectViina(db);
       if (source.connector === 'reliefweb') added = await collectReliefWeb(db,source,get);
+      if (source.connector === 'un-news') added = await collectGulfNews(db,source,get);
       if (source.connector === 'who') added = await collectWho(db,source,get);
       if (source.connector === 'datagouv') added = await collectDatagouv(db,source,get);
       if (source.connector === 'territories') {
