@@ -5,7 +5,7 @@
 # native de secours coûte plusieurs minutes de build pour rien.
 
 ########################  dépendances  ########################
-FROM node:22-bookworm-slim AS deps
+FROM node:22.23.4-bookworm-slim AS deps
 WORKDIR /app
 # Repli si `prebuild-install` ne trouve pas de binaire pour cette ABI.
 RUN apt-get update \
@@ -24,7 +24,7 @@ COPY . .
 RUN npm run build
 
 ########################  runner app  ########################
-FROM node:22-bookworm-slim AS runner
+FROM node:22.23.4-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
@@ -58,7 +58,7 @@ CMD ["node", "server.js"]
 ########################  cron de mise à jour  ########################
 # `scripts/update.mjs` n'utilise que le `fetch` global : pas de node_modules,
 # donc une image nue suffit.
-FROM node:22-bookworm-slim AS cron
+FROM node:22.23.4-bookworm-slim AS cron
 WORKDIR /app
 ENV NODE_ENV=production
 COPY scripts ./scripts
