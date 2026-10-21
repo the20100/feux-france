@@ -24,7 +24,7 @@ jobs:
       # ABI validerait un binaire qui n'ira jamais en production.
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22.23.4'
           cache: npm
 
       - name: Installation
