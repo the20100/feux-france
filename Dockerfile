@@ -5,6 +5,26 @@
 # native de secours coûte plusieurs minutes de build pour rien.
 
 ########################  dépendances  ########################
+# BEGIN security tooling builders
+FROM node:22.23.4-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d AS security-npm-tooling
+RUN npm install --global npm@12.2.1 \
+ && mkdir /patched-undici \
+ && cd /patched-undici \
+ && npm init -y \
+ && npm install --ignore-scripts undici@6.29.1 ip-address@10.3.1 \
+ && rm -rf /usr/local/lib/node_modules/npm/node_modules/undici /usr/local/lib/node_modules/npm/node_modules/ip-address \
+ && cp -R node_modules/undici /usr/local/lib/node_modules/npm/node_modules/undici \
+ && cp -R node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/ip-address \
+ && npm cache clean --force
+RUN mkdir /fixture && cd /fixture \
+ && printf '%s\n' '{"name":"offline-security-fixture","version":"1.0.0","private":true,"scripts":{"start":"node -e \"console.log(42)\""}}' > package.json \
+ && npm install --package-lock-only --ignore-scripts --no-audit \
+ && npm ci --ignore-scripts --no-audit \
+ && npm run start \
+ && npm pack --ignore-scripts --dry-run \
+ && test "$(npm --version)" = 12.2.1
+# END security tooling builders
+
 FROM node:22.23.4-bookworm-slim AS deps
 WORKDIR /app
 # Repli si `prebuild-install` ne trouve pas de binaire pour cette ABI.
@@ -15,6 +35,16 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 ########################  build Next  ########################
+
+# BEGIN runtime security hardening
+USER root
+RUN if command -v apk >/dev/null 2>&1; then apk upgrade --no-cache; \
+    elif command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*; fi \
+    && rm -rf /usr/local/lib/node_modules/npm
+COPY --from=security-npm-tooling /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+USER root
+# END runtime security hardening
+
 FROM deps AS build
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -24,6 +54,16 @@ COPY . .
 RUN npm run build
 
 ########################  runner app  ########################
+
+# BEGIN runtime security hardening
+USER root
+RUN if command -v apk >/dev/null 2>&1; then apk upgrade --no-cache; \
+    elif command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*; fi \
+    && rm -rf /usr/local/lib/node_modules/npm
+COPY --from=security-npm-tooling /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+USER root
+# END runtime security hardening
+
 FROM node:22.23.4-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
@@ -58,6 +98,16 @@ CMD ["node", "server.js"]
 ########################  cron de mise à jour  ########################
 # `scripts/update.mjs` n'utilise que le `fetch` global : pas de node_modules,
 # donc une image nue suffit.
+
+# BEGIN runtime security hardening
+USER root
+RUN if command -v apk >/dev/null 2>&1; then apk upgrade --no-cache; \
+    elif command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*; fi \
+    && rm -rf /usr/local/lib/node_modules/npm
+COPY --from=security-npm-tooling /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+USER node
+# END runtime security hardening
+
 FROM node:22.23.4-bookworm-slim AS cron
 WORKDIR /app
 ENV NODE_ENV=production
@@ -68,6 +118,16 @@ USER node
 CMD ["/usr/local/bin/update-cron.sh"]
 
 # Autonomous OMNI collector and online backup tools. Same persistent volume as FEUX.
+
+# BEGIN runtime security hardening
+USER root
+RUN if command -v apk >/dev/null 2>&1; then apk upgrade --no-cache; \
+    elif command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*; fi \
+    && rm -rf /usr/local/lib/node_modules/npm
+COPY --from=security-npm-tooling /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+USER node
+# END runtime security hardening
+
 FROM deps AS omni-worker
 WORKDIR /app
 ENV NODE_ENV=production
@@ -76,3 +136,12 @@ COPY scripts ./scripts
 RUN mkdir -p /app/data /app/backups && chown -R node:node /app/data /app/backups
 USER node
 CMD ["node", "scripts/omni-worker.mjs", "--daemon"]
+
+# BEGIN runtime security hardening
+USER root
+RUN if command -v apk >/dev/null 2>&1; then apk upgrade --no-cache; \
+    elif command -v apt-get >/dev/null 2>&1; then apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*; fi \
+    && rm -rf /usr/local/lib/node_modules/npm
+COPY --from=security-npm-tooling /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+USER node
+# END runtime security hardening
