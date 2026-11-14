@@ -210,7 +210,7 @@ export default function ParliamentPanel() {
       </section>
 
       <aside className="omni-detail parl-detail">
-        {view === 'forecast' && fa && fc ? <ForecastDetail fc={fc} data={data} a={fa} />
+        {view === 'forecast' && fa && fc ? <ForecastDetail fc={fc} data={data} a={fa} selected={selected} agreement={agreement} onOpen={() => setView('galaxy')} onClear={() => setSelected(null)} />
         : view === 'hemicycle' && kv ? <div className="parl-card">
           <p className="omni-eyebrow">SCRUTIN N°{kv.n} · {kv.date} · {kv.type === 'SPS' ? 'SOLEMN' : 'ORDINARY'}</p>
           <h2>{cap(kv.title)}</h2>

@@ -37,10 +37,23 @@ function MiniGauge({v, conf}: {v: number; conf: number}) {
 }
 
 /* ---------------- detail: big gauge + simulation + group lean ---------------- */
-export function ForecastDetail({fc, data, a}: {fc: Forecast; data: Galaxy; a: LivePrediction}) {
+export function ForecastDetail({fc, data, a, selected, agreement, onOpen, onClear}: {fc: Forecast; data: Galaxy; a: LivePrediction; selected?: number | null; agreement?: (i: number, j: number) => number | null; onOpen?: (i: number) => void; onClear?: () => void}) {
   const gcolor = new Map(data.groups.map(g => [g.id, g.color]));
   const author = a.authorIdx != null ? data.deputies[a.authorIdx] : null;
+  const d = selected != null ? data.deputies[selected] : null;
+  const withAuthor = d && a.authorIdx != null && agreement ? agreement(selected!, a.authorIdx) : null;
   return <div className="parl-card fc-detail" key={a.uid}>
+    {d && <div className="fc-dep" key={d.id}>
+      <button className="fc-dep-x" onClick={onClear} aria-label="Clear selection">×</button>
+      <img src={photo(d.id)} alt="" width={52} height={52} />
+      <div className="fc-dep-body">
+        <b>{d.name}</b><small style={{color: tc(gcolor.get(d.group))}}>{d.group} · {d.dept}</small>
+        <div className="fc-dep-p"><span style={{color: pColor(a.p[selected!])}}>{a.p[selected!]}%</span><em>projected P(for) on n°{a.n}</em></div>
+        <div className="fc-dep-bar"><i style={{width: `${a.p[selected!]}%`, background: pColor(a.p[selected!])}} /></div>
+        <p>{withAuthor != null ? <>Votes like the author {Math.round(withAuthor * 100)}% of the time · </> : null}group loyalty {d.loyalty != null ? `${Math.round(d.loyalty * 100)}%` : '—'} · participation {Math.round(d.participation * 100)}%</p>
+        {onOpen && <button className="fc-dep-open" onClick={() => onOpen(selected!)}>Open full profile ✦</button>}
+      </div>
+    </div>}
     <p className="omni-eyebrow">AMENDMENT N°{a.n} · {a.article} · {fc.text.short}</p>
     <div className="fc-author">{author ? <img src={photo(author.id)} alt="" width={42} height={42} /> : <span className="fc-gov">RF</span>}<div><b>{a.signers}</b><small style={{color: tc(gcolor.get(a.group) || '#b9b4ff')}}>{groupLabel(a.group)}</small></div></div>
     <p className="fc-summary">{a.summary}</p>
