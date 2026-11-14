@@ -231,3 +231,7 @@ body::after {
 .fc-hud-legend, .fc-hud-count small { font-size: 12px; }
 .parl-matrix { font-size: 10px; } .parl-mx-c { font-size: 10px; border-radius: 4px; }
 @media (max-width: 640px) { .omni-map-legend { display: none; } .omni-territory-note { bottom: 46px; } }
+/* the territory note sits under the map caption so it can never meet the legend */
+.omni-territory-note { top: 96px; bottom: auto; left: 18px; }
+@media (max-width: 640px) { .omni-territory-note { top: 92px; bottom: auto; left: 15px; } }
+@media (max-width: 1180px) { .omni-brief-number { gap: 12px; padding: 16px; } .omni-brief-number strong { font-size: 46px; } }
