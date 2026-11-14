@@ -19,7 +19,7 @@ Rules:
 - Answer in the language of the question.`;
 
 export async function POST(req: NextRequest) {
-  if (!KEY) return NextResponse.json({error: 'no_key'}, {status: 503});
+  if (!KEY) return NextResponse.json({error: 'no_key'});
   let body: {question?: string; briefing?: string; history?: {role: string; content: string}[]};
   try { body = await req.json(); } catch { return NextResponse.json({error: 'bad_json'}, {status: 400}); }
   const question = (body.question || '').trim().slice(0, 600);
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   const day = new Date().toISOString().slice(0, 10);
   const bkey = `parl_ai_budget:${day}`;
   const used = miscGet<{n: number}>(bkey, 86400) || {n: 0};
-  if (used.n >= DAILY) return NextResponse.json({error: 'budget', detail: `Daily limit reached (${DAILY} answers). Try again tomorrow.`}, {status: 429});
+  if (used.n >= DAILY) return NextResponse.json({error: 'budget', detail: `Daily limit reached (${DAILY} answers). Try again tomorrow.`});
 
   const history = (body.history || []).slice(-6).filter(m => (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string').map(m => ({role: m.role, content: m.content.slice(0, 1500)}));
   try {
@@ -40,15 +40,15 @@ export async function POST(req: NextRequest) {
       signal: AbortSignal.timeout(25000),
     });
     const text = await r.text();
-    let data: any; try { data = JSON.parse(text); } catch { return NextResponse.json({error: 'upstream', detail: `AI provider returned HTTP ${r.status}`}, {status: 502}); }
-    if (r.status === 429) return NextResponse.json({error: 'busy', detail: 'The free AI models are rate-limited right now. Try again in a minute.'}, {status: 429});
+    let data: any; try { data = JSON.parse(text); } catch { return NextResponse.json({error: 'upstream', detail: `AI provider returned HTTP ${r.status}: ${text.slice(0, 160)}`}); }
+    if (r.status === 429) return NextResponse.json({error: 'busy', detail: 'The free AI models are rate-limited right now. Try again in a minute.'});
     const answer = data?.choices?.[0]?.message?.content?.trim();
-    if (!answer) return NextResponse.json({error: 'empty', detail: data?.error?.message}, {status: 502});
+    if (!answer) return NextResponse.json({error: 'empty', detail: data?.error?.metadata?.raw || data?.error?.message || `no answer (HTTP ${r.status})`});
     miscSet(bkey, {n: used.n + 1});
     return NextResponse.json({answer, model: data.model || MODELS[0], remaining: DAILY - used.n - 1});
   } catch (e) {
     const timeout = (e as Error).name === 'TimeoutError';
-    return NextResponse.json({error: timeout ? 'timeout' : 'upstream', detail: timeout ? 'The AI took too long to answer. Try a shorter question.' : (e as Error).message}, {status: timeout ? 504 : 502});
+    return NextResponse.json({error: timeout ? 'timeout' : 'upstream', detail: timeout ? 'The AI took too long to answer. Try a shorter question.' : (e as Error).message});
   }
 }
 
