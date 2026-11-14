@@ -7,7 +7,7 @@ import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import type {Galaxy} from './types';
 
-export type SceneMode = 'galaxy' | 'hemicycle';
+export type SceneMode = 'galaxy' | 'hemicycle' | 'forecast';
 type Props = {
   data: Galaxy;
   mode: SceneMode;
@@ -15,12 +15,17 @@ type Props = {
   selected: number | null;
   compare: number | null;
   ballots: string | null;  // key vote ballots for hemicycle colouring
+  probs?: number[] | null; // forecast: per-seat P(for) 0-100
+  confidence?: number;     // forecast: 0-1, drives shimmer
   highlightGroup: string | null;
   showLinks: boolean;
   autoRotate: boolean;
   onPick: (i: number | null) => void;
   onHover: (i: number | null, x: number, y: number) => void;
 };
+
+const P_LOW = new (THREE.Color)('#ef5b5b'), P_MID = new (THREE.Color)('#c9b47a'), P_HIGH = new (THREE.Color)('#4fe39a');
+function probColor(p: number) { const t = p / 100; return t < 0.5 ? P_LOW.clone().lerp(P_MID, t * 2) : P_MID.clone().lerp(P_HIGH, (t - 0.5) * 2); }
 
 const BALLOT: Record<string, string> = {p: '#5fd38d', c: '#ef5b5b', a: '#e8c25a', '-': '#3a4540'};
 
@@ -125,6 +130,13 @@ export default function Scene3D(p: Props) {
       lcol.set([a.r, a.g, a.b, b.r, b.g, b.b], k * 6);
     });
 
+    // forecast stems: thin light pillars from the seat floor to the floating sphere
+    const sgeo = new THREE.BufferGeometry(); const spos = new Float32Array(N * 6);
+    sgeo.setAttribute('position', new THREE.BufferAttribute(spos, 3));
+    const stems = new THREE.LineSegments(sgeo, new THREE.LineBasicMaterial({color: '#8fa89a', transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false}));
+    stems.visible = false; scene.add(stems);
+    const shimmer = new THREE.Vector3();
+
     // selection ring
     const ring = new THREE.Mesh(new THREE.TorusGeometry(9, 0.7, 8, 48), new THREE.MeshBasicMaterial({color: '#ffffff'}));
     const ring2 = new THREE.Mesh(new THREE.TorusGeometry(9, 0.7, 8, 48), new THREE.MeshBasicMaterial({color: '#ffd27a'}));
@@ -139,12 +151,13 @@ export default function Scene3D(p: Props) {
     function update(q: Props) {
       const modeChanged = q.mode !== lastMode;
       if (q.mode === 'hemicycle') target = hemi.map(v => new THREE.Vector3(...v));
+      else if (q.mode === 'forecast') target = hemi.map((v, i) => new THREE.Vector3(v[0], v[1] + ((q.probs?.[i] ?? 50) - 50) * 0.9, v[2]));
       else if (modeChanged || q.period !== lastPeriod) target = galaxyPos(q.period).map(v => new THREE.Vector3(...v));
       if (modeChanged) {
         // fit the whole arc (~600 wide) whatever the stage aspect ratio
         const fit = Math.max(560, 760 / Math.max(camera.aspect, 0.3));
-        camGoal = q.mode === 'hemicycle' ? new THREE.Vector3(0, fit * 0.8, fit * 0.58) : new THREE.Vector3(0, 120, Math.max(560, 900 / Math.max(camera.aspect, 0.3)));
-        lookGoal = new THREE.Vector3(0, q.mode === 'hemicycle' ? -10 : 0, 0);
+        camGoal = q.mode !== 'galaxy' ? new THREE.Vector3(0, fit * 0.8, fit * 0.58) : new THREE.Vector3(0, 120, Math.max(560, 900 / Math.max(camera.aspect, 0.3)));
+        lookGoal = new THREE.Vector3(0, q.mode !== 'galaxy' ? -10 : 0, 0);
       }
       lastMode = q.mode; lastPeriod = q.period;
       const sel = q.selected, cmp = q.compare;
@@ -152,17 +165,19 @@ export default function Scene3D(p: Props) {
       data.deputies.forEach((d, i) => {
         let c: THREE.Color = groupColor.get(d.group)!;
         if (q.mode === 'hemicycle' && q.ballots) c = color.set(BALLOT[q.ballots[i]] || BALLOT['-']).clone();
+        if (q.mode === 'forecast' && q.probs) c = probColor(q.probs[i]);
         let dim = false;
         if (q.highlightGroup && d.group !== q.highlightGroup) dim = true;
         if (q.mode === 'galaxy' && sel != null && i !== sel && i !== cmp && !nearSet.has(i)) dim = true;
         const out = dim ? c.clone().multiplyScalar(0.18) : c;
         mesh.setColorAt(i, out);
-        const base = q.mode === 'hemicycle' ? 4.6 : 2.6 + (d.participation || 0) * 9;
+        const base = q.mode === 'forecast' ? 3.4 + Math.abs((q.probs?.[i] ?? 50) - 50) / 22 : q.mode === 'hemicycle' ? 4.6 : 2.6 + (d.participation || 0) * 9;
         tgtScale[i] = i === sel || i === cmp ? base * 1.8 : base;
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mat.emissive.set('#000');
       lines.visible = q.mode === 'galaxy' && q.showLinks;
+      stems.visible = q.mode === 'forecast';
       labels.forEach(l => (l.sprite.visible = q.mode === 'galaxy'));
       ring.visible = sel != null; ring2.visible = cmp != null; tie.visible = sel != null && cmp != null;
       controls.autoRotate = q.autoRotate && q.mode === 'galaxy';
@@ -212,13 +227,15 @@ export default function Scene3D(p: Props) {
       const t = (now - t0) / 1000;
       const q = props.current;
       for (let i = 0; i < N; i++) {
-        cur[i].lerp(target[i], ease(q.mode === 'hemicycle' ? 0.05 + (i % 17) * 0.002 : 0.05, dt));
+        cur[i].lerp(target[i], ease(q.mode !== 'galaxy' ? 0.05 + (i % 17) * 0.002 : 0.05, dt));
         scale[i] += (tgtScale[i] - scale[i]) * ease(0.15, dt);
         const pulse = i === q.selected ? 1 + Math.sin(t * 4) * 0.12 : 1;
-        m4.compose(cur[i], qt, sv.setScalar(scale[i] * pulse));
+        if (q.mode === 'forecast') { const amp = (1 - (q.confidence ?? 1)) * 7 * (1 - Math.abs((q.probs?.[i] ?? 50) - 50) / 50); shimmer.copy(cur[i]); shimmer.y += Math.sin(t * 2.4 + i * 1.7) * amp; m4.compose(shimmer, qt, sv.setScalar(scale[i] * pulse)); }
+        else m4.compose(cur[i], qt, sv.setScalar(scale[i] * pulse));
         mesh.setMatrixAt(i, m4);
       }
       mesh.instanceMatrix.needsUpdate = true;
+      if (stems.visible) { for (let i = 0; i < N; i++) { const h = hemi[i]; spos.set([h[0], h[1] - 2, h[2], cur[i].x, cur[i].y, cur[i].z], i * 6); } sgeo.attributes.position.needsUpdate = true; }
       if (lines.visible) {
         links.forEach(([i, j], k) => { const a = cur[i], b = cur[j]; lpos.set([a.x, a.y, a.z, b.x, b.y, b.z], k * 6); });
         lgeo.attributes.position.needsUpdate = true;
@@ -244,7 +261,7 @@ export default function Scene3D(p: Props) {
     };
   }, [p.data]);
 
-  useEffect(() => { api.current?.update(p); }, [p.mode, p.period, p.selected, p.compare, p.ballots, p.highlightGroup, p.showLinks, p.autoRotate]);
+  useEffect(() => { api.current?.update(p); }, [p.mode, p.period, p.selected, p.compare, p.ballots, p.probs, p.confidence, p.highlightGroup, p.showLinks, p.autoRotate]);
 
   return <div ref={host} className="parl-scene" />;
 }

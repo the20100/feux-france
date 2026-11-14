@@ -288,3 +288,85 @@ fs.writeFileSync(path.join(OUT, 'galaxy.json'), JSON.stringify(galaxy));
 fs.writeFileSync(path.join(OUT, 'agreement.bin'), agree);
 fs.rmSync(path.join(OUT, 'votes.json'), {force: true});
 for (const f of ['galaxy.json', 'agreement.bin']) console.log(`${f}: ${(fs.statSync(path.join(OUT, f)).size / 1e6).toFixed(2)} MB`);
+
+// =====================================================================================
+// FORECAST (Hémicycle / Orcet snapshot) + INSIGHTS
+// Orcet publishes one number per amendment: the mean of deputies' individual P(for).
+// Omni spreads that mean over the chamber using observed voting affinity with the author
+// (and the author's group), then calibrates a logistic so the chamber mean equals Orcet's.
+// This per-deputy split is an Omni projection, labelled as such in the UI.
+// =====================================================================================
+{
+  const snapPath = path.join(ROOT, 'data-snapshots', 'hemicycle-forecast.json');
+  if (fs.existsSync(snapPath)) {
+    const fc = JSON.parse(fs.readFileSync(snapPath, 'utf8'));
+    const abbrOf = po => po === 'GOV' ? 'GOV' : organes[po]?.libelleAbrege || 'NI';
+    const ag = (i, j) => { const k = i * N + j; return glob.both[k] >= MIN_PAIR ? glob.same[k] / glob.both[k] : null; };
+    const groupMembers = g => deputies.map((d, i) => d.group === g ? i : -1).filter(i => i >= 0);
+    const affinity = (members, author) => deputies.map((_, i) => {
+      let s = 0, n = 0;
+      for (const j of members) { if (j === i) continue; const a = ag(i, j); if (a != null) { s += a; n++; } }
+      let a = n ? s / n : 0.5;
+      if (author != null) { const x = author === i ? 1 : ag(i, author); if (x != null) a = 0.5 * a + 0.5 * x; }
+      return a;
+    });
+    const sig = x => 1 / (1 + Math.exp(-x));
+    const calibrate = (aff, mean) => {
+      const K = 14; let lo = -2, hi = 2;
+      for (let it = 0; it < 60; it++) { const c = (lo + hi) / 2; const m = aff.reduce((s, a) => s + sig(K * (a - c)), 0) / aff.length; if (m > mean) lo = c; else hi = c; }
+      const c = (lo + hi) / 2;
+      return aff.map(a => Math.round(sig(K * (a - c)) * 100));
+    };
+    const govBloc = ['EPR', 'Dem', 'HOR'].flatMap(groupMembers);
+    const live = fc.live.map(a => {
+      const g = abbrOf(a.group);
+      const authorIdx = a.author ? idx.get(a.author) ?? null : null;
+      const members = g === 'GOV' ? govBloc : groupMembers(g);
+      const p = calibrate(affinity(members, authorIdx), a.mean);
+      const lean = data_groupsLean(p);
+      return {...a, group: g, authorIdx, p, lean, projectedFor: p.filter(x => x >= 50).length};
+    });
+    function data_groupsLean(p) { return Object.fromEntries(groupsSeen.map(g => { const m = groupMembers(g); return [g, Math.round(m.reduce((s, i) => s + p[i], 0) / (m.length || 1))]; })); }
+
+    const byN = new Map(scrutins.map(s => [s.n, s]));
+    const posName = {1: 'pour', 2: 'contre', 3: 'abstention'};
+    const track = fc.trackRecord.items.map(it => {
+      const s = byN.get(it.scrutin);
+      const groups = it.groups || fc.trackRecord.groupsArticles;
+      const watch = it.watch || fc.trackRecord.watchArticles;
+      const actual = s ? Object.fromEntries(groupsSeen.map((g, gi) => [g, posName[majority(s)[gi]] || 'divisé'])) : null;
+      const hit = it.mean >= 50 === it.adopted;
+      return {
+        ...it, groups, hit, date: s?.date, title: s?.title,
+        actualGroups: actual,
+        watch: watch.map(([id, p, gap]) => { const i = idx.get(id); return {id, i: i ?? null, name: i != null ? deputies[i].name : id, group: i != null ? deputies[i].group : '', p, gap, ballot: s && i != null ? (' pca'[s.ballots[i]] || '-').trim() || '-' : '?'}; }),
+      };
+    });
+    fs.writeFileSync(path.join(OUT, 'forecast.json'), JSON.stringify({
+      fetchedAt: fc.fetchedAt, source: fc.source, text: fc.text, live, track, trackNote: fc.trackRecord.note, signals: fc.signals, agenda: fc.agenda,
+      method: "Orcet gives one figure per amendment: the mean of deputies' individual probabilities of voting for. It is not a probability of adoption. Omni's seat-level split spreads that mean using each deputy's observed agreement with the author and the author's group (government amendments: EPR, Dem, HOR), with a logistic calibrated so the chamber average equals Orcet's mean.",
+    }));
+    console.log(`forecast.json: ${live.length} live predictions, ${track.length} resolved`);
+  }
+
+  // ---------- insights ----------
+  const weekOf = d => { const t = new Date(d + 'T00:00:00Z'); const day = (t.getUTCDay() + 6) % 7; t.setUTCDate(t.getUTCDate() - day); return t.toISOString().slice(0, 10); };
+  const weeks = new Map();
+  for (const s of scrutins) {
+    const w = weekOf(s.date); const o = weeks.get(w) || {w, n: 0, sps: 0, adopted: 0, rejected: 0};
+    o.n++; if (s.type === 'SPS') o.sps++; if (s.sort === 'adopté') o.adopted++; else o.rejected++;
+    weeks.set(w, o);
+  }
+  const rice = list => groupsSeen.map((g, gi) => {
+    let sum = 0, n = 0;
+    for (const s of list) { let p = 0, c = 0, a = 0; for (let i = 0; i < N; i++) if (gIndex[i] === gi && s.ballots[i]) { if (s.ballots[i] === 1) p++; else if (s.ballots[i] === 2) c++; else a++; } const t = p + c + a; if (t >= 3) { sum += Math.max(p, c, a) / t; n++; } }
+    return n ? +(sum / n).toFixed(3) : null;
+  });
+  const cohesion = quarters.map(q => ({q, v: rice(scrutins.filter(s => quarterOf(s.date) === q))}));
+  const hours = new Array(7).fill(0);
+  for (const s of scrutins) hours[(new Date(s.date + 'T00:00:00Z').getUTCDay() + 6) % 7]++;
+  // most divisive scrutins (closest outcome among > 100 voters)
+  const tight = scrutins.filter(s => s.pour + s.contre > 100).map(s => ({n: s.n, date: s.date, title: s.title, pour: s.pour, contre: s.contre, abst: s.abst, sort: s.sort, margin: Math.abs(s.pour - s.contre)})).sort((a, b) => a.margin - b.margin).slice(0, 12);
+  fs.writeFileSync(path.join(OUT, 'insights.json'), JSON.stringify({groups: groupsSeen, weeks: [...weeks.values()].sort((a, b) => a.w.localeCompare(b.w)), cohesion, weekday: hours, tight}));
+  console.log('insights.json written');
+}

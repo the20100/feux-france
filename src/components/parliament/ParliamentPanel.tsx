@@ -1,14 +1,16 @@
 'use client';
 import dynamic from 'next/dynamic';
 import {Fragment, useEffect, useMemo, useRef, useState} from 'react';
-import type {Galaxy} from './types';
+import type {Forecast, Galaxy} from './types';
+import {ForecastDetail, ForecastList, SignalsRadar, TrackRecord} from './Forecast';
+const Insights = dynamic(() => import('./Insights'), {ssr: false, loading: () => <div className="omni-map-loading">Crunching the legislature…</div>});
 import {BALLOT_LABEL, anPage, cap, pct, photo, scrutinPage} from './types';
 // group colours as readable text on the dark background
 const tc = (c?: string) => c ? `color-mix(in srgb, ${c} 55%, #ffffff)` : undefined;
 
 const Scene3D = dynamic(() => import('./Scene3D'), {ssr: false, loading: () => <div className="omni-map-loading">Igniting the galaxy…</div>});
-type View = 'galaxy' | 'hemicycle' | 'compare' | 'quiz';
-const VIEWS: [View, string, string][] = [['galaxy', 'Vote galaxy', '✦'], ['hemicycle', 'Hemicycle replay', '◠'], ['compare', 'Compare', '⇄'], ['quiz', 'Vote like…', '?']];
+type View = 'galaxy' | 'forecast' | 'hemicycle' | 'insights' | 'compare' | 'quiz';
+const VIEWS: [View, string, string][] = [['galaxy', 'Vote galaxy', '✦'], ['forecast', 'Forecast', '◉'], ['hemicycle', 'Hemicycle replay', '◠'], ['insights', 'Insights', '▤'], ['compare', 'Compare', '⇄'], ['quiz', 'Vote like…', '?']];
 const QUIZ_SIZE = 12;
 
 function readUrl() {
@@ -32,10 +34,15 @@ export default function ParliamentPanel() {
   const [rotate, setRotate] = useState(true);
   const [hover, setHover] = useState<{i: number; x: number; y: number} | null>(null);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [fc, setFc] = useState<Forecast | null>(null);
+  const [fcSel, setFcSel] = useState(0);
+  const [fcSort, setFcSort] = useState('tension');
+  const [overlay, setOverlay] = useState<'track' | 'signals' | null>(null);
   const booted = useRef(false);
 
   useEffect(() => {
     fetch('/parliament/galaxy.json').then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }).then(setData).catch(e => setError(String(e.message || e)));
+    fetch('/parliament/forecast.json').then(r => r.ok ? r.json() : null).then(setFc).catch(() => {});
     fetch('/parliament/agreement.bin').then(r => r.arrayBuffer()).then(b => setAgree(new Uint8Array(b))).catch(() => {});
   }, []);
 
@@ -111,7 +118,8 @@ export default function ParliamentPanel() {
   const sel = selected != null ? data.deputies[selected] : null;
   const cmp = compare != null ? data.deputies[compare] : null;
   const kv = data.keyVotes[vote];
-  const sceneMode = view === 'hemicycle' ? 'hemicycle' : 'galaxy';
+  const sceneMode = view === 'hemicycle' ? 'hemicycle' : view === 'forecast' && fc ? 'forecast' : 'galaxy';
+  const fa = fc?.live[fcSel];
   const pairAgree = sel && cmp ? agreement(selected!, compare!) : null;
   const diverge = sel && cmp ? data.keyVotes.filter(k => k.ballots[selected!] !== '-' && k.ballots[compare!] !== '-' && k.ballots[selected!] !== k.ballots[compare!]).slice(0, 8) : [];
   const groupMatrix = period >= 0 ? data.periods[period].groups : data.globalGroups;
@@ -148,9 +156,11 @@ export default function ParliamentPanel() {
       <div className="omni-heading-actions"><span className="omni-freshness">ASSEMBLÉE NATIONALE<small>Data through {data.range[1]}</small></span></div>
     </div>
     <div className="parl-views" role="tablist">{VIEWS.map(([id, label, mark]) => <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)}><span aria-hidden>{mark}</span>{label}</button>)}</div>
+    {view === 'insights' ? <div className="ins-wrap"><Insights data={data} onPick={i => { setSelected(i); setView('galaxy'); }} /></div> :
     <div className="omni-workspace parl-workspace">
       <aside className="omni-sidebar">
-        {view === 'hemicycle' ? <>
+        {view === 'forecast' && fc ? <ForecastList fc={fc} data={data} sel={fcSel} onSel={i => { setFcSel(i); setOverlay(null); }} sort={fcSort} setSort={setFcSort} />
+        : view === 'hemicycle' ? <>
           <div className="omni-sidebar-top"><div className="omni-section-label">SOLEMN & FINAL VOTES <span>{data.keyVotes.length}</span></div></div>
           <div className="omni-record-list">{data.keyVotes.map((k, i) => <button key={k.n} className="parl-vote-row" aria-pressed={i === vote} onClick={() => setVote(i)}>
             <small>{k.date} · n°{k.n} · <b className={k.sort === 'adopté' ? 'ok' : 'ko'}>{k.sort}</b></small><span>{cap(k.title)}</span></button>)}</div>
@@ -174,17 +184,24 @@ export default function ParliamentPanel() {
 
       <section className="omni-map-area parl-stage">
         <Scene3D data={data} mode={sceneMode} period={view === 'galaxy' ? period : -1} selected={selected} compare={compare}
-          ballots={view === 'hemicycle' ? kv?.ballots ?? null : null} highlightGroup={group} showLinks={links} autoRotate={rotate && selected == null}
+          ballots={view === 'hemicycle' ? kv?.ballots ?? null : null} probs={sceneMode === 'forecast' ? fa?.p ?? null : null} confidence={fa?.conf} highlightGroup={group} showLinks={links} autoRotate={rotate && selected == null}
           onPick={pickDeputy} onHover={(i, x, y) => setHover(i == null ? null : {i, x, y})} />
         {hover && <div className="parl-tip" style={{left: hover.x + 14, top: hover.y + 10}}>
           <b>{data.deputies[hover.i].name}</b><span style={{color: tc(gcolor.get(data.deputies[hover.i].group))}}>{data.deputies[hover.i].group}</span>
-          {view === 'hemicycle' && kv ? <em>{BALLOT_LABEL[kv.ballots[hover.i]]}</em> : selected != null && hover.i !== selected ? <em>{pct(agreement(selected, hover.i))} agreement with {data.deputies[selected].name}</em> : <em>loyalty {pct(data.deputies[hover.i].loyalty)}</em>}
+          {sceneMode === 'forecast' && fa ? <em>projected P(for) {fa.p[hover.i]}%</em> : view === 'hemicycle' && kv ? <em>{BALLOT_LABEL[kv.ballots[hover.i]]}</em> : selected != null && hover.i !== selected ? <em>{pct(agreement(selected, hover.i))} agreement with {data.deputies[selected].name}</em> : <em>loyalty {pct(data.deputies[hover.i].loyalty)}</em>}
         </div>}
         <div className="parl-overlay">
           {sceneMode === 'galaxy' && <><label><input type="checkbox" checked={links} onChange={e => setLinks(e.target.checked)} /> Twin links</label><span className="parl-legend-gold">— gold: cross-group allies</span></>}
           <label><input type="checkbox" checked={rotate} onChange={e => setRotate(e.target.checked)} /> Orbit</label>
           {view === 'hemicycle' && <span className="parl-ballot-legend">{(['p', 'c', 'a', '-'] as const).map(b => <span key={b} data-b={b}>{BALLOT_LABEL[b]} {counts[b] || 0}</span>)}</span>}
         </div>
+        {sceneMode === 'forecast' && fa && <div className="fc-stage-hud">
+          <div className="fc-hud-legend"><span>0%</span><i /><span>100% P(for)</span></div>
+          <div className="fc-hud-count"><b>{fa.projectedFor}</b><small>deputies projected ≥ 50% for</small></div>
+          <div className="fc-hud-actions"><button aria-pressed={overlay === 'track'} onClick={() => setOverlay(o => o === 'track' ? null : 'track')}>◎ Orcet track record</button><button aria-pressed={overlay === 'signals'} onClick={() => setOverlay(o => o === 'signals' ? null : 'signals')}>◌ Weak-signal radar</button></div>
+        </div>}
+        {view === 'forecast' && fc && overlay === 'track' && <TrackRecord fc={fc} data={data} onClose={() => setOverlay(null)} />}
+        {view === 'forecast' && fc && overlay === 'signals' && <SignalsRadar fc={fc} onClose={() => setOverlay(null)} />}
         {view === 'galaxy' && <div className="omni-timeline parl-timeline">
           <button onClick={() => { if (period < 0) setPeriod(0); setPlaying(p => !p); }} aria-label={playing ? 'Pause' : 'Play'}>{playing ? '❚❚' : '▶'}</button>
           <div className="omni-timeline-title"><strong>{period < 0 ? 'Whole legislature' : data.periods[period].id.replace('-', ' · ')}</strong><small>{period < 0 ? `${data.range[0]} → ${data.range[1]}` : `${data.periods[period].scrutins} divisions this quarter`}</small></div>
@@ -193,7 +210,8 @@ export default function ParliamentPanel() {
       </section>
 
       <aside className="omni-detail parl-detail">
-        {view === 'hemicycle' && kv ? <div className="parl-card">
+        {view === 'forecast' && fa && fc ? <ForecastDetail fc={fc} data={data} a={fa} />
+        : view === 'hemicycle' && kv ? <div className="parl-card">
           <p className="omni-eyebrow">SCRUTIN N°{kv.n} · {kv.date} · {kv.type === 'SPS' ? 'SOLEMN' : 'ORDINARY'}</p>
           <h2>{cap(kv.title)}</h2>
           <p className={`parl-result ${kv.sort === 'adopté' ? 'ok' : 'ko'}`}>{kv.sort === 'adopté' ? 'Adopted' : 'Rejected'} — {kv.pour} for · {kv.contre} against · {kv.abst} abstained</p>
@@ -233,7 +251,7 @@ export default function ParliamentPanel() {
         </div>}
         <p className="parl-source">Source: <a href={data.source.url} target="_blank" rel="noreferrer">{data.source.name}</a> — {data.source.license}. {data.method}</p>
       </aside>
-    </div>
+    </div>}
   </div>;
 }
 
