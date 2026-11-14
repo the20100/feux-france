@@ -96,7 +96,7 @@ function Situation({ c, range }: { c: Cluster; range: string }) {
       const g = ctx.createLinearGradient(0, H - h, 0, H);
       g.addColorStop(0, i === buckets.length - 1 ? "#ffb03a" : "#ff6a2b");
       g.addColorStop(1, "#7c2d12");
-      ctx.fillStyle = b === 0 ? "#1b2733" : g;
+      ctx.fillStyle = b === 0 ? "#0d1833" : g;
       ctx.fillRect(i * bw + 1.5, H - h, bw - 3, h);
     });
   }, [c.id, c.buckets]);

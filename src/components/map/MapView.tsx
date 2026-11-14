@@ -59,7 +59,7 @@ export default function MapView(props: Props) {
     }).catch(()=>{});
     fetch("/france-metropole.geojson").then((r) => r.json()).then((gj) => {
       if (!disposed)
-        L.geoJSON(gj, { style: { color: "#324250", weight: 1, fill: false, opacity: 0.8 } }).addTo(map);
+        L.geoJSON(gj, { style: { color: "#1a2a51", weight: 1, fill: false, opacity: 0.8 } }).addTo(map);
     }).catch(() => {});
 
     const ctx: MapCtx = {

@@ -6,7 +6,7 @@ import {anPage, photo} from './types';
 import {briefing, plan, type Goal, type Plan, type Target} from './whip';
 
 const tc = (c?: string) => c ? `color-mix(in srgb, ${c} 55%, #ffffff)` : undefined;
-const pColor = (p: number) => d3.interpolateRgbBasis(['#ef5b5b', '#c9b47a', '#4fe39a'])(p / 100);
+const pColor = (p: number) => d3.interpolateRgbBasis(['#ff5d7d', '#c9d6ff', '#3fe6b4'])(p / 100);
 
 export function useStrategy(data: Galaxy | null, a: LivePrediction | undefined, goal: Goal, agreement: (i: number, j: number) => number | null, on: boolean) {
   return useMemo(() => on && data && a ? plan(data, a.p, goal, agreement) : null, [data, a, goal, agreement, on]);
@@ -37,7 +37,7 @@ export default function StrategyPanel({data, a, goal, setGoal, pl, onPick, selec
 
     <Curve pl={pl} />
 
-    {pl.groups.length > 0 && <div className="st-groups"><div className="omni-section-label">WHERE THE MOVABLE VOTES ARE</div>
+    {pl.groups.length > 0 && <div className="st-groups"><div className="omni-section-label">Where the movable votes are</div>
       <div>{pl.groups.slice(0, 6).map(g => <span key={g.id} style={{borderColor: gcolor.get(g.id), color: tc(gcolor.get(g.id))}}>{g.id} <b>{g.n}</b></span>)}</div></div>}
 
     <div className="parl-seg st-tabs">{([['persuade', `Persuade · ${pl.persuade.length}`], ['mobilise', `Mobilise · ${pl.mobilise.length}`]] as const).map(([k, l]) => <button key={k} aria-pressed={tab === k} onClick={() => setTab(k)}>{l}</button>)}</div>
@@ -80,22 +80,22 @@ function Curve({pl}: {pl: Plan}) {
     const W = 300, H = 120, m = {l: 26, r: 8, t: 8, b: 18};
     const svg = d3.select(ref.current!); svg.selectAll('*').remove();
     const x = d3.scaleLinear([0, pl.curve.length - 1], [m.l, W - m.r]), y = d3.scaleLinear([0, 1], [H - m.b, m.t]);
-    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickSize(0)).call(g => g.select('.domain').remove()).selectAll('text').attr('fill', '#a5b2a7').attr('font-size', 8);
-    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.0%')).tickSize(-(W - m.l - m.r))).call(g => g.select('.domain').remove()).call(g => g.selectAll('line').attr('stroke', '#1f2a25')).selectAll('text').attr('fill', '#a5b2a7').attr('font-size', 8);
-    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(.5)).attr('y2', y(.5)).attr('stroke', '#e6ebe1').attr('stroke-dasharray', '2 3').attr('opacity', .5);
+    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickSize(0)).call(g => g.select('.domain').remove()).selectAll('text').attr('fill', '#8fa0c8').attr('font-size', 8);
+    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.0%')).tickSize(-(W - m.l - m.r))).call(g => g.select('.domain').remove()).call(g => g.selectAll('line').attr('stroke', '#11192b')).selectAll('text').attr('fill', '#8fa0c8').attr('font-size', 8);
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(.5)).attr('y2', y(.5)).attr('stroke', '#d9e1f2').attr('stroke-dasharray', '2 3').attr('opacity', .5);
     const defs = svg.append('defs'), g = defs.append('linearGradient').attr('id', 'stg').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
-    g.append('stop').attr('offset', 0).attr('stop-color', '#b9b4ff').attr('stop-opacity', .45); g.append('stop').attr('offset', 1).attr('stop-color', '#b9b4ff').attr('stop-opacity', 0);
+    g.append('stop').attr('offset', 0).attr('stop-color', '#b4ceff').attr('stop-opacity', .45); g.append('stop').attr('offset', 1).attr('stop-color', '#b4ceff').attr('stop-opacity', 0);
     const area = d3.area<{k: number; win: number}>(c => x(c.k), H - m.b, c => y(c.win)).curve(d3.curveMonotoneX);
     const line = d3.line<{k: number; win: number}>(c => x(c.k), c => y(c.win)).curve(d3.curveMonotoneX);
     svg.append('path').datum(pl.curve).attr('d', area).attr('fill', 'url(#stg)').attr('opacity', 0).transition().duration(900).attr('opacity', 1);
-    const p = svg.append('path').datum(pl.curve).attr('d', line).attr('fill', 'none').attr('stroke', '#b9b4ff').attr('stroke-width', 2);
+    const p = svg.append('path').datum(pl.curve).attr('d', line).attr('fill', 'none').attr('stroke', '#b4ceff').attr('stroke-width', 2);
     const L = (p.node() as SVGPathElement).getTotalLength();
     p.attr('stroke-dasharray', `${L} ${L}`).attr('stroke-dashoffset', L).transition().duration(1100).ease(d3.easeCubicOut).attr('stroke-dashoffset', 0);
     const k50 = pl.curve.find(c => c.win >= .5);
-    if (k50) svg.append('circle').attr('cx', x(k50.k)).attr('cy', y(k50.win)).attr('r', 0).attr('fill', '#4fe39a').transition().delay(1000).attr('r', 4);
-    svg.append('text').attr('x', W - m.r).attr('y', H - 2).attr('text-anchor', 'end').attr('fill', '#a5b2a7').attr('font-size', 8).text('deputies acted on →');
+    if (k50) svg.append('circle').attr('cx', x(k50.k)).attr('cy', y(k50.win)).attr('r', 0).attr('fill', '#3fe6b4').transition().delay(1000).attr('r', 4);
+    svg.append('text').attr('x', W - m.r).attr('y', H - 2).attr('text-anchor', 'end').attr('fill', '#8fa0c8').attr('font-size', 8).text('deputies acted on →');
   }, [pl]);
-  return <div className="st-curve"><div className="omni-section-label">CHANCE OF SUCCESS VS DEPUTIES WON OVER OR BROUGHT IN</div><svg ref={ref} viewBox="0 0 300 120" /></div>;
+  return <div className="st-curve"><div className="omni-section-label">Chance of success as deputies are won over or brought in</div><svg ref={ref} viewBox="0 0 300 120" /></div>;
 }
 
 const SUGGESTIONS = ['Who should I meet first, and why?', 'Draft a 3-step plan for this week.', 'Which group is the key to this vote?', 'What arguments might move the swing deputies?'];
@@ -124,9 +124,9 @@ function Chat({data, a, pl}: {data: Galaxy; a: LivePrediction; pl: Plan}) {
       setMsgs(m => [...m, {role: 'assistant', content: j.answer!}]);
     } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
   };
-  if (enabled === false) return <div className="st-chat off"><div className="omni-section-label">AI STRATEGIST</div><p className="parl-muted">Not configured on this server (OpenRouter key missing).</p></div>;
+  if (enabled === false) return <div className="st-chat off"><div className="omni-section-label">AI strategist</div><p className="parl-muted">Not configured on this server (OpenRouter key missing).</p></div>;
   return <div className="st-chat">
-    <div className="omni-section-label">AI STRATEGIST <span>answers only from the numbers above</span></div>
+    <div className="omni-section-label">AI strategist <span>answers only from the numbers above</span></div>
     <div className="st-msgs" ref={box}>
       {!msgs.length && <div className="st-sugg">{SUGGESTIONS.map(s => <button key={s} onClick={() => ask(s)} disabled={!enabled}>{s}</button>)}</div>}
       {msgs.map((m, i) => <div key={i} className={`st-msg ${m.role}`}>{m.content.split('\n').map((l, k) => <p key={k}>{l.replace(/\*\*(.+?)\*\*/g, '$1')}</p>)}</div>)}

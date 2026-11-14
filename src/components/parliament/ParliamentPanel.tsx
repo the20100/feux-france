@@ -145,7 +145,7 @@ export default function ParliamentPanel() {
       <div><dt>Participation</dt><dd>{pct(d.participation)}</dd></div>
       <div><dt>Votes cast</dt><dd>{d.votes.toLocaleString('fr-FR')}</dd></div>
     </dl>
-    <div className="omni-section-label">CLOSEST VOTING TWINS</div>
+    <div className="omni-section-label">Closest voting twins</div>
     <ul className="parl-near">{d.near.map(([j, a]) => <li key={j}><button onClick={() => setSelected(j)}><span className="omni-topic-dot" style={{background: gcolor.get(data.deputies[j].group)}} />{data.deputies[j].name}<small>{data.deputies[j].group}</small><b>{pct(a)}</b></button></li>)}</ul>
     {d.bridge && data.deputies[d.bridge[0]].group !== d.group && <p className="parl-bridge">Closest ally outside {d.group}: <button onClick={() => setSelected(d.bridge![0])}>{data.deputies[d.bridge[0]].name} ({data.deputies[d.bridge[0]].group})</button> — {pct(d.bridge[1])} agreement</p>}
     <div className="parl-actions">
@@ -159,7 +159,7 @@ export default function ParliamentPanel() {
     <div className="omni-heading">
       <div><p className="omni-eyebrow">05 / PARLIAMENT</p><h1>Who votes with whom.</h1>
         <p className="omni-subtitle">{data.deputies.length} deputies placed in 3D by how they actually vote, across {data.scrutins.toLocaleString('en-GB')} recorded divisions of the {data.legislature}th legislature. Close stars vote alike.</p></div>
-      <div className="omni-heading-actions"><span className="omni-freshness">ASSEMBLÉE NATIONALE<small>Data through {data.range[1]}</small></span></div>
+      <div className="omni-heading-actions"><span className="omni-freshness">Assemblée nationale<small>Data through {data.range[1]}</small></span></div>
     </div>
     <div className="parl-views" role="tablist">{VIEWS.map(([id, label, mark]) => <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)}><span aria-hidden>{mark}</span>{label}</button>)}</div>
     {view === 'insights' ? <div className="ins-wrap"><Insights data={data} onPick={i => { setSelected(i); setView('galaxy'); }} /></div> :
@@ -167,11 +167,11 @@ export default function ParliamentPanel() {
       <aside className="omni-sidebar">
         {view === 'forecast' && fc ? <ForecastList fc={fc} data={data} sel={fcSel} onSel={i => { setFcSel(i); setOverlay(null); }} sort={fcSort} setSort={setFcSort} />
         : view === 'hemicycle' ? <>
-          <div className="omni-sidebar-top"><div className="omni-section-label">SOLEMN & FINAL VOTES <span>{data.keyVotes.length}</span></div></div>
+          <div className="omni-sidebar-top"><div className="omni-section-label">Solemn and final votes <span>{data.keyVotes.length}</span></div></div>
           <div className="omni-record-list">{data.keyVotes.map((k, i) => <button key={k.n} className="parl-vote-row" aria-pressed={i === vote} onClick={() => setVote(i)}>
             <small>{k.date} · n°{k.n} · <b className={k.sort === 'adopté' ? 'ok' : 'ko'}>{k.sort}</b></small><span>{cap(k.title)}</span></button>)}</div>
         </> : view === 'quiz' ? <>
-          <div className="omni-sidebar-top"><div className="omni-section-label">YOUR VOTE <span>{Object.keys(answers).length}/{quizVotes.length}</span></div>
+          <div className="omni-sidebar-top"><div className="omni-section-label">Your vote <span>{Object.keys(answers).length}/{quizVotes.length}</span></div>
             <p className="parl-muted">Vote on the latest final readings. We find the deputies and groups who voted like you.</p></div>
           <div className="omni-record-list">{quizVotes.map((k, qi) => <div key={k.n} className="parl-quiz">
             <small>{k.date} · <b className={k.sort === 'adopté' ? 'ok' : 'ko'}>{k.sort}</b></small><p>{cap(k.title)}</p>
@@ -179,7 +179,7 @@ export default function ParliamentPanel() {
           </div>)}</div>
         </> : <>
           <div className="omni-sidebar-top">
-            <div className="omni-section-label">{view === 'compare' ? 'PICK TWO DEPUTIES' : 'DEPUTIES'} <span>{list.length}</span></div>
+            <div className="omni-section-label">{view === 'compare' ? 'Pick two deputies' : 'Deputies'} <span>{list.length}</span></div>
             <input className="omni-search" placeholder="Name, département, group…" value={query} onChange={e => setQuery(e.target.value)} aria-label="Search deputies" />
             <div className="parl-groups">{data.groups.map(g => <button key={g.id} aria-pressed={group === g.id} onClick={() => setGroup(group === g.id ? null : g.id)} title={g.name}><i style={{background: g.color}} />{g.id}<small>{g.size}</small></button>)}</div>
           </div>
@@ -222,10 +222,10 @@ export default function ParliamentPanel() {
           : <ForecastDetail fc={fc} data={data} a={fa} selected={selected} agreement={agreement} onOpen={() => setView('galaxy')} onClear={() => setSelected(null)} />}
         </>
         : view === 'hemicycle' && kv ? <div className="parl-card">
-          <p className="omni-eyebrow">SCRUTIN N°{kv.n} · {kv.date} · {kv.type === 'SPS' ? 'SOLEMN' : 'ORDINARY'}</p>
+          <p className="omni-eyebrow">Division n°{kv.n} · {kv.date} · {kv.type === 'SPS' ? 'solemn' : 'ordinary'}</p>
           <h2>{cap(kv.title)}</h2>
           <p className={`parl-result ${kv.sort === 'adopté' ? 'ok' : 'ko'}`}>{kv.sort === 'adopté' ? 'Adopted' : 'Rejected'} — {kv.pour} for · {kv.contre} against · {kv.abst} abstained</p>
-          <div className="omni-section-label">BY GROUP</div>
+          <div className="omni-section-label">By group</div>
           <div className="parl-bars">{data.groups.map(g => {
             const c: Record<string, number> = {p: 0, c: 0, a: 0, '-': 0};
             data.deputies.forEach((d, i) => { if (d.group === g.id) c[kv.ballots[i]]++; });
@@ -235,26 +235,26 @@ export default function ParliamentPanel() {
           {sel && <p className="parl-muted">{sel.name}: <b>{BALLOT_LABEL[kv.ballots[selected!]]}</b></p>}
         </div>
         : view === 'compare' ? <div className="parl-card">
-          <p className="omni-eyebrow">VOTING COMPARATOR</p>
+          <p className="omni-eyebrow">Voting comparator</p>
           {!sel ? <p className="parl-muted">Pick a first deputy in the list or the galaxy.</p> : !cmp ? <><h2>{sel.name}</h2><p className="parl-muted">Now pick a second deputy. The dashed gold line will join them in space.</p></> : <>
             <div className="parl-vs">{[sel, cmp].map((d, k) => <button key={d.id} onClick={() => k ? setCompare(null) : (setSelected(compare), setCompare(null))}><img src={photo(d.id)} alt="" width={56} height={56} /><b>{d.name}</b><small style={{color: tc(gcolor.get(d.group))}}>{d.group}</small></button>)}</div>
             <div className="parl-big">{pct(pairAgree)}<small>identical positions when both voted</small></div>
-            <div className="omni-section-label">WHERE THEY SPLIT (FINAL & SOLEMN VOTES)</div>
+            <div className="omni-section-label">Where they split on final and solemn votes</div>
             {diverge.length ? <ul className="parl-split">{diverge.map(k => <li key={k.n}><a href={scrutinPage(k.n)} target="_blank" rel="noreferrer">{cap(k.title)}</a><span><b data-b={k.ballots[selected!]}>{BALLOT_LABEL[k.ballots[selected!]]}</b> vs <b data-b={k.ballots[compare!]}>{BALLOT_LABEL[k.ballots[compare!]]}</b></span></li>)}</ul> : <p className="parl-muted">No disagreement on key votes they both cast.</p>}
           </>}
         </div>
         : view === 'quiz' ? <div className="parl-card">
-          <p className="omni-eyebrow">YOUR POLITICAL TWINS</p>
+          <p className="omni-eyebrow">Your political twins</p>
           {!quizResult ? <p className="parl-muted">Answer at least 3 votes. Results update live and your best match lights up in the galaxy.</p> : <>
-            <div className="omni-section-label">GROUPS</div>
+            <div className="omni-section-label">Groups</div>
             <div className="parl-bars">{quizResult.groups.map(({g, score}) => <div key={g.id} className="parl-bar"><span style={{color: tc(g.color)}}>{g.id}</span><div><i style={{flex: score, background: g.color}} /><i style={{flex: 1 - score}} data-b="-" /></div><b>{pct(score)}</b></div>)}</div>
-            <div className="omni-section-label">DEPUTIES</div>
+            <div className="omni-section-label">Deputies</div>
             <ul className="parl-near">{quizResult.top.map(({i, score, n}) => <li key={i}><button onClick={() => setSelected(i)}><span className="omni-topic-dot" style={{background: gcolor.get(data.deputies[i].group)}} />{data.deputies[i].name}<small>{data.deputies[i].group} · {n} votes</small><b>{pct(score)}</b></button></li>)}</ul>
           </>}
         </div>
         : sel ? deputyCard(sel, selected!)
         : <div className="parl-card">
-          <p className="omni-eyebrow">GROUP AFFINITIES · {period < 0 ? 'LEGISLATURE' : data.periods[period].id}</p>
+          <p className="omni-eyebrow">Group affinities, {period < 0 ? 'whole legislature' : data.periods[period].id}</p>
           <p className="parl-muted">Share of divisions where both groups' majority positions matched.</p>
           <GroupMatrix data={data} rows={groupMatrix} />
           <p className="parl-muted">Click a star, or press ▶ to watch coalitions move quarter by quarter.</p>
@@ -272,7 +272,7 @@ function GroupMatrix({data, rows}: {data: Galaxy; rows: [string, string, number,
     <span />{ids.map(id => <span key={id} className="parl-mx-h" style={{color: tc(data.groups.find(g => g.id === id)!.color)}}>{id}</span>)}
     {ids.map(a => <Fragment key={a}>
       <span className="parl-mx-r" style={{color: tc(data.groups.find(g => g.id === a)!.color)}}>{a}</span>
-      {ids.map(b => { const v = a === b ? 1 : m.get(`${a}|${b}`); return <span key={a + b} className="parl-mx-c" title={`${a} × ${b}: ${v == null ? 'n/a' : pct(v)}`} style={{background: v == null ? 'transparent' : `hsla(${v * 130 - 10}, 65%, 45%, ${0.25 + v * 0.75})`}}>{v == null || a === b ? '' : Math.round(v * 100)}</span>; })}
+      {ids.map(b => { const v = a === b ? 1 : m.get(`${a}|${b}`); return <span key={a + b} className="parl-mx-c" title={`${a} × ${b}: ${v == null ? 'n/a' : pct(v)}`} style={{background: v == null ? 'transparent' : `rgba(${Math.round(40 + 150 * (1 - v))}, ${Math.round(110 + 80 * v)}, 255, ${0.08 + v * v * 0.82})`}}>{v == null || a === b ? '' : Math.round(v * 100)}</span>; })}
     </Fragment>)}
   </div>;
 }

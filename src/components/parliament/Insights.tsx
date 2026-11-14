@@ -4,8 +4,8 @@ import {useEffect, useRef, useState} from 'react';
 import type {Galaxy, Insights as InsightsData} from './types';
 import {cap, pct, scrutinPage} from './types';
 
-const tc = (c?: string) => c ? `color-mix(in srgb, ${c} 55%, #ffffff)` : '#e1e7db';
-const AXIS = '#5d6d64', INK = '#e1e7db', MUTED = '#a5b2a7';
+const tc = (c?: string) => c ? `color-mix(in srgb, ${c} 55%, #ffffff)` : '#d2dbf0';
+const AXIS = '#475983', INK = '#d2dbf0', MUTED = '#8fa0c8';
 
 /** Runs `draw` once when the card scrolls into view (and again on data change). */
 function useReveal(draw: (svg: d3.Selection<SVGSVGElement, unknown, null, undefined>) => void | (() => void), deps: unknown[]) {
@@ -64,7 +64,7 @@ function Stream({ins}: {ins: InsightsData}) {
     const y = d3.scaleLinear([-max, max], [H - m.b, m.t]);
     const area = (k: 'adopted' | 'rejected', s: number) => d3.area<(typeof ins.weeks)[number]>(w => x(new Date(w.w)), y(0), w => y(s * w[k])).curve(d3.curveBasis);
     const defs = svg.append('defs');
-    [['ga', '#4fe39a'], ['gr', '#ef5b5b']].forEach(([id, c]) => { const g = defs.append('linearGradient').attr('id', id).attr('x1', 0).attr('x2', 0).attr('y1', id === 'ga' ? 0 : 1).attr('y2', id === 'ga' ? 1 : 0); g.append('stop').attr('offset', 0).attr('stop-color', c).attr('stop-opacity', .85); g.append('stop').attr('offset', 1).attr('stop-color', c).attr('stop-opacity', .05); });
+    [['ga', '#3fe6b4'], ['gr', '#ff5d7d']].forEach(([id, c]) => { const g = defs.append('linearGradient').attr('id', id).attr('x1', 0).attr('x2', 0).attr('y1', id === 'ga' ? 0 : 1).attr('y2', id === 'ga' ? 1 : 0); g.append('stop').attr('offset', 0).attr('stop-color', c).attr('stop-opacity', .85); g.append('stop').attr('offset', 1).attr('stop-color', c).attr('stop-opacity', .05); });
     const clip = defs.append('clipPath').attr('id', 'reveal').append('rect').attr('x', 0).attr('y', 0).attr('height', H).attr('width', 0);
     clip.transition().duration(2200).ease(d3.easeCubicInOut).attr('width', W);
     const g = svg.append('g').attr('clip-path', 'url(#reveal)');
@@ -72,7 +72,7 @@ function Stream({ins}: {ins: InsightsData}) {
     g.append('path').datum(ins.weeks).attr('d', area('rejected', -1)).attr('fill', 'url(#gr)');
     svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', AXIS);
     svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(8).tickSize(0).tickFormat(d => d3.timeFormat('%b %y')(d as Date))).call(a => a.select('.domain').remove()).selectAll('text').attr('fill', MUTED);
-    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d => `${Math.abs(+d)}`).tickSize(-(W - m.l - m.r))).call(a => a.select('.domain').remove()).call(a => a.selectAll('line').attr('stroke', '#1f2a25')).selectAll('text').attr('fill', MUTED);
+    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d => `${Math.abs(+d)}`).tickSize(-(W - m.l - m.r))).call(a => a.select('.domain').remove()).call(a => a.selectAll('line').attr('stroke', '#11192b')).selectAll('text').attr('fill', MUTED);
     // peak annotation
     const peak = ins.weeks.reduce((a, b) => b.n > a.n ? b : a);
     const px = x(new Date(peak.w));
@@ -93,13 +93,13 @@ function Chord({data}: {data: Galaxy}) {
     const arc = d3.arc<d3.ChordGroup>().innerRadius(R).outerRadius(R + 12);
     const ribbon = d3.ribbon<d3.Chord, d3.ChordSubgroup>().radius(R - 2);
     const groups = g.append('g').selectAll('g').data(chord.groups).join('g');
-    groups.append('path').attr('fill', d => data.groups[d.index].color).attr('stroke', '#0b110e')
+    groups.append('path').attr('fill', d => data.groups[d.index].color).attr('stroke', '#060911')
       .transition().duration(1000).attrTween('d', d => { const i = d3.interpolate({...d, endAngle: d.startAngle}, d); return t => arc(i(t)) || ''; });
     groups.append('text').each(d => ((d as any).angle = (d.startAngle + d.endAngle) / 2)).attr('dy', '.35em')
       .attr('transform', d => { const a = (d as any).angle; return `rotate(${a * 180 / Math.PI - 90}) translate(${R + 18}) ${a > Math.PI ? 'rotate(180)' : ''}`; })
       .attr('text-anchor', d => (d as any).angle > Math.PI ? 'end' : null).attr('fill', d => tc(data.groups[d.index].color)).attr('font-size', 11).attr('font-weight', 600).text(d => ids[d.index]);
     const ribbons = g.append('g').attr('fill-opacity', 0.55).selectAll('path').data(chord).join('path')
-      .attr('fill', d => data.groups[d.source.index].color).attr('stroke', '#0b110e').attr('stroke-width', .3).attr('d', d => ribbon(d) as unknown as string)
+      .attr('fill', d => data.groups[d.source.index].color).attr('stroke', '#060911').attr('stroke-width', .3).attr('d', d => ribbon(d) as unknown as string)
       .attr('opacity', 0).transition().delay((_, i) => 600 + i * 15).duration(600).attr('opacity', 1);
     groups.on('mouseenter', (_, d) => { setHover(d.index); g.selectAll<SVGPathElement, d3.Chord>('g:last-child path').transition().duration(200).attr('opacity', c => c.source.index === d.index || c.target.index === d.index ? 1 : 0.06); })
       .on('mouseleave', () => { setHover(null); g.selectAll('g:last-child path').transition().duration(200).attr('opacity', 1); });
@@ -118,12 +118,12 @@ function Swarm({data, onPick}: {data: Galaxy; onPick: (i: number) => void}) {
     const groups = data.groups.filter(g => g.id !== 'NI');
     const y = d3.scaleBand(groups.map(g => g.id), [m.t, H - m.b]).padding(0.1);
     const x = d3.scaleLinear([0.6, 1], [m.l, W - m.r]).clamp(true);
-    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('.0%')).tickSize(-(H - m.t - m.b))).call(a => a.select('.domain').remove()).call(a => a.selectAll('line').attr('stroke', '#1f2a25')).selectAll('text').attr('fill', MUTED);
+    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('.0%')).tickSize(-(H - m.t - m.b))).call(a => a.select('.domain').remove()).call(a => a.selectAll('line').attr('stroke', '#11192b')).selectAll('text').attr('fill', MUTED);
     svg.append('g').selectAll('text').data(groups).join('text').attr('x', m.l - 8).attr('y', g => y(g.id)! + y.bandwidth() / 2).attr('dy', '.35em').attr('text-anchor', 'end').attr('fill', g => tc(g.color)).attr('font-size', 10).attr('font-weight', 600).text(g => g.id);
     type N = d3.SimulationNodeDatum & {i: number; tx: number; ty: number};
     const nodes: N[] = data.deputies.map((d, i) => ({d, i})).filter(({d}) => d.loyalty != null && d.group !== 'NI').map(({d, i}) => ({i, tx: x(d.loyalty!), ty: y(d.group)! + y.bandwidth() / 2, x: m.l, y: y(d.group)! + y.bandwidth() / 2}));
     const color = new Map(data.groups.map(g => [g.id, g.color]));
-    const dots = svg.append('g').selectAll('circle').data(nodes).join('circle').attr('r', 2.6).attr('fill', n => color.get(data.deputies[n.i].group)!).attr('stroke', '#0b110e').attr('stroke-width', .4).style('cursor', 'pointer')
+    const dots = svg.append('g').selectAll('circle').data(nodes).join('circle').attr('r', 2.6).attr('fill', n => color.get(data.deputies[n.i].group)!).attr('stroke', '#060911').attr('stroke-width', .4).style('cursor', 'pointer')
       .on('mouseenter', (_, n) => setTip(`${data.deputies[n.i].name} · ${data.deputies[n.i].group} · ${pct(data.deputies[n.i].loyalty)}`)).on('click', (_, n) => onPick(n.i));
     const sim = d3.forceSimulation(nodes).force('x', d3.forceX<N>(n => n.tx).strength(0.9)).force('y', d3.forceY<N>(n => n.ty).strength(0.12)).force('c', d3.forceCollide(2.9)).alpha(1).alphaDecay(0.02)
       .on('tick', () => dots.attr('cx', n => n.x!).attr('cy', n => n.y!));
@@ -139,13 +139,13 @@ function Cohesion({data, ins}: {data: Galaxy; ins: InsightsData}) {
     const all = ins.cohesion.flatMap(c => c.v.filter((v): v is number => v != null));
     const y = d3.scaleLinear([Math.max(0.5, (d3.min(all) || 0.6) - 0.02), 1], [H - m.b, m.t]);
     svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSize(0)).call(a => a.select('.domain').remove()).selectAll('text').attr('fill', MUTED);
-    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')).tickSize(-(W - m.l - m.r))).call(a => a.select('.domain').remove()).call(a => a.selectAll('line').attr('stroke', '#1f2a25')).selectAll('text').attr('fill', MUTED);
+    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')).tickSize(-(W - m.l - m.r))).call(a => a.select('.domain').remove()).call(a => a.selectAll('line').attr('stroke', '#11192b')).selectAll('text').attr('fill', MUTED);
     const color = new Map(data.groups.map(g => [g.id, g.color]));
     const labels: {g: string; gi: number; x: number; y: number}[] = [];
     ins.groups.forEach((g, gi) => {
       const pts = ins.cohesion.map(c => [x(c.q)!, c.v[gi]] as const).filter(([, v]) => v != null) as [number, number][];
       const line = d3.line<[number, number]>(p => p[0], p => y(p[1])).curve(d3.curveCatmullRom);
-      const path = svg.append('path').datum(pts).attr('d', line).attr('fill', 'none').attr('stroke', color.get(g) || '#888').attr('stroke-width', 2.2).attr('stroke-linecap', 'round');
+      const path = svg.append('path').datum(pts).attr('d', line).attr('fill', 'none').attr('stroke', color.get(g) || '#647aac').attr('stroke-width', 2.2).attr('stroke-linecap', 'round');
       const L = (path.node() as SVGPathElement).getTotalLength();
       path.attr('stroke-dasharray', `${L} ${L}`).attr('stroke-dashoffset', L).transition().delay(gi * 120).duration(1600).ease(d3.easeCubicOut).attr('stroke-dashoffset', 0);
       const last = pts[pts.length - 1];

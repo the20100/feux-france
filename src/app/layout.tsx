@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import "./omni.css";
 import "./parliament.css";
+import "./theme.css";
 import PlatformNav from "@/components/omni/PlatformNav";
 
 export const metadata: Metadata = {

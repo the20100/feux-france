@@ -3,7 +3,7 @@ import L from 'leaflet';
 import { useEffect,useRef } from 'react';
 import type { Observation,Topic,Territory } from './types';
 import { dateLabel,statusLabels } from './types';
-const colours:Record<string,string>={controlled:'#d78876',contested:'#d8b363',claimed:'#b5a6d4'};
+const colours:Record<string,string>={controlled:'#d78876',contested:'#d8b363',claimed:'#99b2e1'};
 export default function WorldMap({topics,observations,territories,topic,onTopic,onSelect,fires,storageKey}:{storageKey:string;topics:Topic[];observations:Observation[];territories:Territory[];topic:string;onTopic:(id:string)=>void;onSelect:(o:Observation)=>void;fires:any[]}) {
   const el=useRef<HTMLDivElement>(null),map=useRef<L.Map|null>(null),group=useRef<L.LayerGroup|null>(null),lastTopic=useRef<string|null>(null);
   useEffect(()=>{
@@ -23,7 +23,7 @@ export default function WorldMap({topics,observations,territories,topic,onTopic,
       tile.addTo(m);
     }).catch(()=>{});
     fetch('/world-countries.geojson',{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error('Basemap unavailable');return r.json();}).then(world=>{
-      basemap=L.geoJSON(world,{pane:'omni-basemap',interactive:false,style:{color:'#415044',weight:.7,fillColor:'#26382e',fillOpacity:1}}).addTo(m);
+      basemap=L.geoJSON(world,{pane:'omni-basemap',interactive:false,style:{color:'#223154',weight:.7,fillColor:'#141f39',fillOpacity:1}}).addTo(m);
       if(tiled&&basemap)m.removeLayer(basemap);
       for(const f of world.features){const p=f.properties;if(!Number.isFinite(p.LABEL_X)||!Number.isFinite(p.LABEL_Y))continue;
         const label=document.createElement('span');label.textContent=p.ADMIN;
@@ -62,12 +62,12 @@ export default function WorldMap({topics,observations,territories,topic,onTopic,
     for(const t of topics.filter(t=>!topic||t.id===topic)) {
       if(t.lat==null||t.lon==null)continue;
       const count=observations.filter(o=>o.topic===t.id).length;
-      const marker=L.circleMarker([t.lat,t.lon],{radius:t.id===topic?10:7,color:t.domain==='war'?'#d8b363':'#a2c8ae',weight:1.5,fillOpacity:.2}).addTo(g);
+      const marker=L.circleMarker([t.lat,t.lon],{radius:t.id===topic?10:7,color:t.domain==='war'?'#d8b363':'#90a6da',weight:1.5,fillOpacity:.2}).addTo(g);
       const label=document.createElement('span');label.textContent=`${t.name} · ${count} publication${count>1?'s':''} · regional marker`;
       marker.bindTooltip(label,{direction:'top',className:'omni-map-label'}).on('click',()=>onTopic(t.id));
     }
     for(const o of observations.filter(o=>o.lat!=null&&o.lon!=null)) {
-      const marker=L.circleMarker([o.lat!,o.lon!],{radius:5,color:o.status==='unverified'?'#d8b363':'#a2c8ae',fillOpacity:.85,weight:1}).addTo(g);
+      const marker=L.circleMarker([o.lat!,o.lon!],{radius:5,color:o.status==='unverified'?'#d8b363':'#90a6da',fillOpacity:.85,weight:1}).addTo(g);
       const node=document.createElement('span');node.textContent=`${o.title} · ${o.location}`;
       marker.bindTooltip(node).on('click',()=>onSelect(o));
     }

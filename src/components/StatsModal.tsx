@@ -26,12 +26,12 @@ export default function StatsModal({ open, onClose }: { open: boolean; onClose: 
       const h = Math.max(2, (x.n / max) * (H - 40));
       ctx.fillStyle = i === days.length - 1 ? "#ffb03a" : "#ff6a2b";
       ctx.fillRect(i * bw + 2, H - 22 - h, bw - 4, h);
-      ctx.fillStyle = "#77848f";
+      ctx.fillStyle = "#5e74a8";
       ctx.font = "16px ui-monospace";
       ctx.textAlign = "center";
       if (i % Math.ceil(days.length / 8) === 0) ctx.fillText(x.d.slice(5), i * bw + bw / 2, H - 4);
       if (x.n === max) {
-        ctx.fillStyle = "#d7dde3";
+        ctx.fillStyle = "#ccd6ee";
         ctx.fillText(fmtInt(x.n), i * bw + bw / 2, H - 30 - h);
       }
     });

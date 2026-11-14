@@ -25,10 +25,10 @@ type Props = {
   onHover: (i: number | null, x: number, y: number) => void;
 };
 
-const P_LOW = new (THREE.Color)('#ef5b5b'), P_MID = new (THREE.Color)('#c9b47a'), P_HIGH = new (THREE.Color)('#4fe39a');
+const P_LOW = new (THREE.Color)('#ff5d7d'), P_MID = new (THREE.Color)('#c9d6ff'), P_HIGH = new (THREE.Color)('#3fe6b4');
 function probColor(p: number) { const t = p / 100; return t < 0.5 ? P_LOW.clone().lerp(P_MID, t * 2) : P_MID.clone().lerp(P_HIGH, (t - 0.5) * 2); }
 
-const BALLOT: Record<string, string> = {p: '#5fd38d', c: '#ef5b5b', a: '#e8c25a', '-': '#3a4540'};
+const BALLOT: Record<string, string> = {p: '#3fe6b4', c: '#ff5d7d', a: '#ffcf6b', '-': '#1e2b4a'};
 
 /** Seats of a 3D hemicycle: deputies ordered left→right by group centroid, then by seat number. */
 export function hemicycleLayout(data: Galaxy) {
@@ -62,10 +62,10 @@ export default function Scene3D(p: Props) {
     const N = data.deputies.length;
     const renderer = new THREE.WebGLRenderer({antialias: true, powerPreference: 'high-performance'});
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setClearColor('#070b0a');
+    renderer.setClearColor('#02050d');
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2('#070b0a', 0.0011);
+    scene.fog = new THREE.FogExp2('#02050d', 0.0009);
     const camera = new THREE.PerspectiveCamera(50, 1, 1, 5000);
     camera.position.set(0, 120, 560);
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -76,12 +76,32 @@ export default function Scene3D(p: Props) {
     const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.85, 0.55, 0.12);
     composer.addPass(bloom);
 
+    // nebula backdrop: a clip-space quad drawn first, drifting with the camera for parallax
+    const nebMat = new THREE.ShaderMaterial({
+      uniforms: {uT: {value: 0}, uA: {value: new THREE.Vector2()}, uAsp: {value: 1.6}},
+      vertexShader: 'varying vec2 vU; void main(){ vU=uv; gl_Position=vec4(position.xy,1.0,1.0); }',
+      fragmentShader: `precision highp float; varying vec2 vU; uniform float uT,uAsp; uniform vec2 uA;
+        float h(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+        float n(vec2 p){ vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y); }
+        float fbm(vec2 p){ float v=0.0,a=0.5; for(int k=0;k<5;k++){ v+=a*n(p); p=p*2.03+vec2(1.7,9.2); a*=0.5; } return v; }
+        void main(){ vec2 p=(vU-0.5)*vec2(uAsp,1.0); vec2 q=p*1.35+uA*vec2(0.55,0.35)+vec2(uT*0.006,0.0);
+          float f=fbm(q+fbm(q*1.7+uT*0.01)*0.9); float g=fbm(q*2.2-vec2(4.0,1.0));
+          vec3 c=vec3(0.006,0.012,0.034);
+          c+=vec3(0.014,0.042,0.14)*smoothstep(0.38,0.85,f)*1.2;
+          c+=vec3(0.02,0.07,0.24)*pow(smoothstep(0.52,0.95,f),2.0)*0.85;
+          c+=vec3(0.07,0.035,0.18)*smoothstep(0.55,0.9,g)*smoothstep(0.4,0.8,f)*0.5;
+          c+=vec3(0.02,0.11,0.18)*pow(smoothstep(0.6,0.98,g),3.0)*0.4;
+          c*=mix(0.4,1.0,smoothstep(1.15,0.25,length(p))); gl_FragColor=vec4(c,1.0); }`,
+      depthTest: false, depthWrite: false, fog: false,
+    });
+    const neb = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), nebMat); neb.frustumCulled = false; neb.renderOrder = -1000; scene.add(neb);
+
     // starfield backdrop
     {
       const g = new THREE.BufferGeometry(), a = new Float32Array(3000 * 3);
       for (let i = 0; i < a.length; i++) a[i] = (Math.random() - 0.5) * 3200;
       g.setAttribute('position', new THREE.BufferAttribute(a, 3));
-      scene.add(new THREE.Points(g, new THREE.PointsMaterial({color: '#3d4a44', size: 1.4, sizeAttenuation: false})));
+      scene.add(new THREE.Points(g, new THREE.PointsMaterial({color: '#7f9fe6', size: 1.5, sizeAttenuation: false, transparent: true, opacity: 0.55, fog: false})));
     }
     scene.add(new THREE.AmbientLight('#ffffff', 0.55));
     const key = new THREE.PointLight('#ffffff', 2.2, 0, 0); key.position.set(200, 400, 300); scene.add(key);
@@ -108,7 +128,7 @@ export default function Scene3D(p: Props) {
     for (const g of data.groups) {
       const c = document.createElement('canvas'); c.width = 256; c.height = 64;
       const x = c.getContext('2d')!; x.font = '600 30px Avenir Next, Avenir, sans-serif'; x.fillStyle = g.color; x.textAlign = 'center';
-      x.shadowColor = '#000'; x.shadowBlur = 8; x.fillText(g.id, 128, 42);
+      x.shadowColor = '#000000'; x.shadowBlur = 8; x.fillText(g.id, 128, 42);
       const s = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false, opacity: 0.85}));
       s.scale.set(64, 16, 1); scene.add(s); labels.push({sprite: s, id: g.id});
     }
@@ -125,7 +145,7 @@ export default function Scene3D(p: Props) {
     lgeo.setAttribute('color', new THREE.BufferAttribute(lcol, 3));
     const lines = new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({vertexColors: true, transparent: true, opacity: 0.32, blending: THREE.AdditiveBlending, depthWrite: false}));
     scene.add(lines);
-    const gold = new THREE.Color('#ffd27a');
+    const gold = new THREE.Color('#ffcf7a');
     links.forEach(([i, j, bridge], k) => {
       const a = bridge ? gold : groupColor.get(data.deputies[i].group)!, b = bridge ? gold : groupColor.get(data.deputies[j].group)!;
       lcol.set([a.r, a.g, a.b, b.r, b.g, b.b], k * 6);
@@ -134,15 +154,15 @@ export default function Scene3D(p: Props) {
     // forecast stems: thin light pillars from the seat floor to the floating sphere
     const sgeo = new THREE.BufferGeometry(); const spos = new Float32Array(N * 6);
     sgeo.setAttribute('position', new THREE.BufferAttribute(spos, 3));
-    const stems = new THREE.LineSegments(sgeo, new THREE.LineBasicMaterial({color: '#8fa89a', transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false}));
+    const stems = new THREE.LineSegments(sgeo, new THREE.LineBasicMaterial({color: '#7a8ebd', transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false}));
     stems.visible = false; scene.add(stems);
     const shimmer = new THREE.Vector3();
 
     // selection ring
     const ring = new THREE.Mesh(new THREE.TorusGeometry(9, 0.7, 8, 48), new THREE.MeshBasicMaterial({color: '#ffffff'}));
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(9, 0.7, 8, 48), new THREE.MeshBasicMaterial({color: '#ffd27a'}));
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(9, 0.7, 8, 48), new THREE.MeshBasicMaterial({color: '#ffcf7a'}));
     scene.add(ring, ring2);
-    const tie = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineDashedMaterial({color: '#ffd27a', dashSize: 6, gapSize: 4}));
+    const tie = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineDashedMaterial({color: '#ffcf7a', dashSize: 6, gapSize: 4}));
     scene.add(tie);
 
     let camGoal: THREE.Vector3 | null = null, lookGoal: THREE.Vector3 | null = null;
@@ -177,7 +197,7 @@ export default function Scene3D(p: Props) {
         tgtScale[i] = i === sel || i === cmp ? base * 1.8 : base;
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-      mat.emissive.set('#000');
+      mat.emissive.set('#000000');
       lines.visible = q.mode === 'galaxy' && q.showLinks;
       stems.visible = q.mode === 'forecast';
       labels.forEach(l => (l.sprite.visible = q.mode === 'galaxy'));
@@ -253,6 +273,7 @@ export default function Scene3D(p: Props) {
       if (q.selected != null && q.compare != null) { tie.geometry.setFromPoints([cur[q.selected], cur[q.compare]]); tie.computeLineDistances(); }
       if (camGoal) { camera.position.lerp(camGoal, ease(0.05, dt)); if (camera.position.distanceTo(camGoal) < 1) camGoal = null; }
       if (lookGoal) { controls.target.lerp(lookGoal, ease(0.08, dt)); if (controls.target.distanceTo(lookGoal) < 0.5) lookGoal = null; }
+      nebMat.uniforms.uT.value = t; nebMat.uniforms.uA.value.set(controls.getAzimuthalAngle(), controls.getPolarAngle()); nebMat.uniforms.uAsp.value = camera.aspect;
       controls.update();
       composer.render();
     };
