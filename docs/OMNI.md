@@ -149,3 +149,14 @@ The Iran & Gulf feed offers All, News, Official, Social and Videos filters, pers
 Only dated, relevant individual post/video URLs from supported platforms are retained. Profile and search pages, future/undated results and unrelated results are excluded. Twitter/X URLs, YouTube variants and Reddit share links are canonicalized. Each run retains one result per canonical URL; subsequent changes create archive revisions. Social posts and videos always enter as unverified signals without inferred coordinates or event times. Cards retain original-language excerpts (up to 280 characters), source previews when supplied, and links to the original platform. Midnight timestamps from search metadata are displayed as dates rather than pretending to establish the post's precise time.
 
 Platform coverage depends on Exa indexing. Initial live checks returned usable Bluesky posts, but no relevant dated video results; this is not a guarantee of X, Instagram or video coverage. Empty feeds remain explicit, without substituting unrelated content. Public post excerpts may include linked headlines and do not establish eyewitness status or independent corroboration.
+
+## PARLIAMENT (`/parlement`)
+
+Fifth panel: the 17th legislature of the Assemblée nationale as a 3D vote space.
+
+- **Vote galaxy**: each deputy is a star; distance = 1 − agreement (share of identical for/against/abstain positions on divisions both cast, ≥ 15 shared). Classical MDS gives the axes (axis 1 is oriented left → right). Twin links join each deputy to its closest voters; gold links are strong cross-group allies. The quarter slider replays coalitions: each quarter is a Nyström projection on the same axes, so motion reflects behaviour, not an arbitrary rotation. Group affinity matrix uses groups' majority positions.
+- **Hemicycle replay**: the 160 latest solemn votes and final readings, seat by seat (groups ordered by their position on axis 1, then seat number).
+- **Compare**: pairwise agreement over all divisions plus the key votes where two deputies split.
+- **Vote like…**: the user votes on the latest 12 final readings; matching deputies and groups update live.
+
+Data: `npm run parliament:build` downloads the Assemblée open data (scrutins + active deputies, Licence Ouverte 2.0), writes `public/parliament/galaxy.json` (~0.5 MB) and `public/parliament/agreement.bin` (N×N bytes). Raw archives stay in `data/parliament-src` (git-ignored). No API key; about 10 s. Censure motions are excluded (only "for" ballots are published). Loyalty is computed per deputy against the current group's majority, ≥ 20 counted votes. Re-run and commit to refresh; the panel shows the last division date.

@@ -2,7 +2,7 @@
   "name": "omni-control",
   "version": "1.0.0",
   "private": true,
-  "description": "OMNI \u2014 observatoire g\u00e9ospatial FEUX, PANDEMIC et WAR, historique et sources.",
+  "description": "OMNI — observatoire géospatial FEUX, PANDEMIC et WAR, historique et sources.",
   "scripts": {
     "dev": "next dev -p 8742",
     "build": "next build",
@@ -13,7 +13,8 @@
     "omni:worker": "node scripts/omni-worker.mjs --daemon",
     "omni:import": "node scripts/omni-import.mjs",
     "backup": "node scripts/backup.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "parliament:build": "node scripts/parliament-build.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",
@@ -23,13 +24,15 @@
     "leaflet.heat": "^0.2.0",
     "next": "^15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "three": "^0.170.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.11",
     "@types/leaflet": "^1.9.14",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
+    "@types/three": "^0.170.0",
     "typescript": "^5.7.0"
   },
   "overrides": {

@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-const panels = [{id:'global',label:'GLOBAL',mark:'◎'},{id:'feux',label:'FIRES',mark:'▲'},{id:'pandemic',label:'PANDEMIC',mark:'✳'},{id:'war',label:'WAR',mark:'◇'}];
+const panels = [{id:'global',label:'GLOBAL',mark:'◎'},{id:'feux',label:'FIRES',mark:'▲'},{id:'pandemic',label:'PANDEMIC',mark:'✳'},{id:'war',label:'WAR',mark:'◇'},{id:'parlement',label:'PARLIAMENT',mark:'✦'}];
 export default function PlatformNav() {
   const pathname=usePathname(); const router=useRouter();
   const active=pathname==='/'?'global':pathname.split('/')[1];

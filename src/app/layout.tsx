@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import "./omni.css";
+import "./parliament.css";
 import PlatformNav from "@/components/omni/PlatformNav";
 
 export const metadata: Metadata = {
