@@ -4,7 +4,9 @@ import {miscGet, miscSet} from '@/lib/cache';
 export const dynamic = 'force-dynamic';
 
 const KEY = (process.env.OPENROUTER_API_KEY || '').trim();
-const MODEL = (process.env.PARLIAMENT_AI_MODEL || process.env.OPENROUTER_MODEL || 'openai/gpt-5-nano').trim();
+// Free models first; OpenRouter tries them in order (`models` routing). Override with PARLIAMENT_AI_MODELS=a,b,c
+const MODELS = (process.env.PARLIAMENT_AI_MODELS || 'baidu/ernie-5.5-flash-preview:free,nvidia/nemotron-3-ultra-550b-a55b:free,google/gemma-4-31b-it:free')
+  .split(',').map(m => m.trim()).filter(Boolean).slice(0, 3);
 const DAILY = Number(process.env.PARLIAMENT_AI_DAILY || 80); // answers per UTC day, whole site
 
 const SYSTEM = `You are a parliamentary strategy analyst for the French Assemblée nationale.
@@ -34,16 +36,19 @@ export async function POST(req: NextRequest) {
     const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', Authorization: `Bearer ${KEY}`},
-      body: JSON.stringify({model: MODEL, messages: [{role: 'system', content: SYSTEM}, {role: 'user', content: `BRIEFING\n${brief}`}, ...history, {role: 'user', content: question}]}),
-      signal: AbortSignal.timeout(45000),
+      body: JSON.stringify({models: MODELS, max_tokens: 600, temperature: 0.4, reasoning: {exclude: true, effort: 'low'}, messages: [{role: 'system', content: SYSTEM}, {role: 'user', content: `BRIEFING\n${brief}`}, ...history, {role: 'user', content: question}]}),
+      signal: AbortSignal.timeout(25000),
     });
-    const data = await r.json();
+    const text = await r.text();
+    let data: any; try { data = JSON.parse(text); } catch { return NextResponse.json({error: 'upstream', detail: `AI provider returned HTTP ${r.status}`}, {status: 502}); }
+    if (r.status === 429) return NextResponse.json({error: 'busy', detail: 'The free AI models are rate-limited right now. Try again in a minute.'}, {status: 429});
     const answer = data?.choices?.[0]?.message?.content?.trim();
     if (!answer) return NextResponse.json({error: 'empty', detail: data?.error?.message}, {status: 502});
     miscSet(bkey, {n: used.n + 1});
-    return NextResponse.json({answer, model: MODEL, remaining: DAILY - used.n - 1});
+    return NextResponse.json({answer, model: data.model || MODELS[0], remaining: DAILY - used.n - 1});
   } catch (e) {
-    return NextResponse.json({error: 'upstream', detail: (e as Error).message}, {status: 502});
+    const timeout = (e as Error).name === 'TimeoutError';
+    return NextResponse.json({error: timeout ? 'timeout' : 'upstream', detail: timeout ? 'The AI took too long to answer. Try a shorter question.' : (e as Error).message}, {status: timeout ? 504 : 502});
   }
 }
 

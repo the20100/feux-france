@@ -117,9 +117,11 @@ function Chat({data, a, pl}: {data: Galaxy; a: LivePrediction; pl: Plan}) {
     setMsgs(m => [...m, {role: 'user', content: question}]);
     try {
       const r = await fetch('/api/parliament/strategy', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({question, history, briefing: briefing(data, pl, a)})});
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.detail || j.error || `HTTP ${r.status}`);
-      setMsgs(m => [...m, {role: 'assistant', content: j.answer}]);
+      const raw = await r.text();
+      let j: {answer?: string; detail?: string; error?: string} = {};
+      try { j = JSON.parse(raw); } catch { throw new Error(r.status === 504 || r.status === 502 ? 'The AI took too long to answer. Please try again.' : `Server error (HTTP ${r.status}). Please try again.`); }
+      if (!r.ok || !j.answer) throw new Error(j.detail || j.error || `HTTP ${r.status}`);
+      setMsgs(m => [...m, {role: 'assistant', content: j.answer!}]);
     } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
   };
   if (enabled === false) return <div className="st-chat off"><div className="omni-section-label">AI STRATEGIST</div><p className="parl-muted">Not configured on this server (OpenRouter key missing).</p></div>;
