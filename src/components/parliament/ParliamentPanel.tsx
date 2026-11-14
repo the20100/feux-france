@@ -1,19 +1,27 @@
 'use client';
 import dynamic from 'next/dynamic';
 import {Fragment, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import type {Forecast, Galaxy} from './types';
+import type {Cosign, Forecast, Galaxy} from './types';
+import {Bills, CosignDetail, CosignSidebar, Interests} from './Extras';
 import {ForecastDetail, ForecastList, SignalsRadar, TrackRecord} from './Forecast';
 import StrategyPanel, {useStrategy} from './Strategy';
 import type {Goal} from './whip';
 const Insights = dynamic(() => import('./Insights'), {ssr: false, loading: () => <div className="omni-map-loading">Crunching the legislature…</div>});
-import {BALLOT_LABEL, anPage, cap, pct, photo, scrutinPage} from './types';
+import {BALLOT_LABEL, anPage, cap, pct, photo, voteUrl} from './types';
 // group colours as readable text on the dark background
 const tc = (c?: string) => c ? `color-mix(in srgb, ${c} 55%, #ffffff)` : undefined;
 
 const Scene3D = dynamic(() => import('./Scene3D'), {ssr: false, loading: () => <div className="omni-map-loading">Igniting the galaxy…</div>});
-type View = 'galaxy' | 'forecast' | 'hemicycle' | 'insights' | 'compare' | 'quiz';
-const VIEWS: [View, string, string][] = [['galaxy', 'Vote galaxy', '✦'], ['forecast', 'Forecast', '◉'], ['hemicycle', 'Hemicycle replay', '◠'], ['insights', 'Insights', '▤'], ['compare', 'Compare', '⇄'], ['quiz', 'Vote like…', '?']];
+type View = 'galaxy' | 'forecast' | 'hemicycle' | 'cosign' | 'bills' | 'lobby' | 'insights' | 'compare' | 'quiz';
+type Chamber = 'an' | 'senate';
+const SENATE_VIEWS: View[] = ['galaxy', 'hemicycle', 'compare', 'quiz'];
+const VIEWS: [View, string, string][] = [['galaxy', 'Vote galaxy', '✦'], ['forecast', 'Forecast', '◉'], ['hemicycle', 'Hemicycle replay', '◠'], ['cosign', 'Amendments', '❖'], ['bills', 'Bills', '☰'], ['lobby', 'Interests', '◈'], ['insights', 'Insights', '▤'], ['compare', 'Compare', '⇄'], ['quiz', 'Vote like…', '?']];
 const QUIZ_SIZE = 12;
+const HEAD: Partial<Record<View, [string, string]>> = {
+  cosign: ['Who signs with whom.', 'Every amendment a deputy tabled, and the colleagues who put their name next to it.'],
+  bills: ['Where each bill stands.', 'Step by step between the Assemblée and the Senate, with the votes and amendments on the way.'],
+  lobby: ['Who lobbies Parliament.', 'What interest representatives declare to the HATVP: themes, targets and spending.'],
+};
 
 function readUrl() {
   if (typeof window === 'undefined') return new URLSearchParams();
@@ -21,8 +29,14 @@ function readUrl() {
 }
 
 export default function ParliamentPanel() {
-  const [data, setData] = useState<Galaxy | null>(null);
-  const [agree, setAgree] = useState<Uint8Array | null>(null);
+  const [chamber, setChamber] = useState<Chamber>('an');
+  const [anData, setData] = useState<Galaxy | null>(null);
+  const [anAgree, setAgree] = useState<Uint8Array | null>(null);
+  const [senData, setSen] = useState<Galaxy | null>(null);
+  const [senAgree, setSenAgree] = useState<Uint8Array | null>(null);
+  const [co, setCo] = useState<Cosign | null>(null);
+  const senate = chamber === 'senate';
+  const data = senate ? senData : anData, agree = senate ? senAgree : anAgree;
   const [error, setError] = useState('');
   const [view, setView] = useState<View>('galaxy');
   const [period, setPeriod] = useState(-1);
@@ -50,11 +64,25 @@ export default function ParliamentPanel() {
     fetch('/parliament/agreement.bin').then(r => r.arrayBuffer()).then(b => setAgree(new Uint8Array(b))).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (chamber !== 'senate' || senData) return;
+    fetch('/parliament/senate.json').then(r => r.json()).then(setSen).catch(e => setError(String(e.message || e)));
+    fetch('/parliament/senate-agreement.bin').then(r => r.arrayBuffer()).then(b => setSenAgree(new Uint8Array(b))).catch(() => {});
+  }, [chamber, senData]);
+  useEffect(() => { if (view === 'cosign' && !co) fetch('/parliament/cosign.json').then(r => r.json()).then(setCo).catch(() => {}); }, [view, co]);
+  const switchChamber = (c: Chamber) => {
+    if (c === chamber) return;
+    setSelected(null); setCompare(null); setVote(0); setGroup(null); setPeriod(-1); setPlaying(false); setAnswers({}); setQuery(''); setHover(null);
+    if (c === 'senate' && !SENATE_VIEWS.includes(view)) setView('galaxy');
+    setChamber(c);
+  };
+
   // restore state from URL once data is in
   useEffect(() => {
     if (!data || booted.current) return;
     booted.current = true;
     const u = readUrl();
+    if (u.get('chamber') === 'senate' && chamber !== 'senate') { booted.current = false; setChamber('senate'); return; }
     const v = u.get('view') as View; if (v && VIEWS.some(x => x[0] === v)) setView(v);
     const d = data.deputies.findIndex(x => x.id === u.get('d')); if (d >= 0) setSelected(d);
     const c = data.deputies.findIndex(x => x.id === u.get('vs')); if (c >= 0) setCompare(c);
@@ -64,6 +92,7 @@ export default function ParliamentPanel() {
   useEffect(() => {
     if (!data || !booted.current) return;
     const u = new URLSearchParams();
+    if (senate) u.set('chamber', 'senate');
     if (view !== 'galaxy') u.set('view', view);
     if (selected != null) u.set('d', data.deputies[selected].id);
     if (compare != null) u.set('vs', data.deputies[compare].id);
@@ -72,7 +101,7 @@ export default function ParliamentPanel() {
     const url = `/parlement${u.size ? `?${u}` : ''}`;
     window.history.replaceState(null, '', url);
     try { sessionStorage.setItem('omni-url-parlement', url); } catch {}
-  }, [data, view, selected, compare, vote, group]);
+  }, [data, view, selected, compare, vote, group, senate]);
 
   // timeline playback
   useEffect(() => {
@@ -82,7 +111,7 @@ export default function ParliamentPanel() {
   }, [playing, data]);
 
   const agreement = useCallback((i: number, j: number) => { if (!agree || !data) return null; const v = agree[i * data.deputies.length + j]; return v === 255 ? null : v / 200; }, [agree, data]);
-  const strat = useStrategy(data, fc?.live[fcSel], goal, agreement, view === 'forecast' && fcPane === 'strategy' && !!agree);
+  const strat = useStrategy(senate ? null : data, fc?.live[fcSel], goal, agreement, !senate && view === 'forecast' && fcPane === 'strategy' && !!agree);
   const targets = useMemo(() => strat ? [...strat.persuade.slice(0, 15), ...strat.mobilise.slice(0, 15)].flatMap(t => t.messenger ? [t.i, t.messenger.i] : [t.i]) : null, [strat]);
   const gcolor = useMemo(() => new Map(data?.groups.map(g => [g.id, g.color]) || []), [data]);
 
@@ -93,7 +122,7 @@ export default function ParliamentPanel() {
   }, [data, query, group]);
 
   // quiz: the latest decisive votes on whole texts
-  const quizVotes = useMemo(() => data ? data.keyVotes.filter(k => /l'ensemble/i.test(k.title)).slice(0, QUIZ_SIZE) : [], [data]);
+  const quizVotes = useMemo(() => data ? data.keyVotes.filter(k => /l['’]ensemble/i.test(k.title)).slice(0, QUIZ_SIZE) : [], [data]);
   const quizResult = useMemo(() => {
     if (!data) return null;
     const keys = quizVotes.map((k, qi) => [k, answers[qi]] as const).filter(([, a]) => a);
@@ -119,12 +148,16 @@ export default function ParliamentPanel() {
   useEffect(() => { if (view === 'quiz' && quizResult?.top[0]) setSelected(quizResult.top[0].i); }, [quizResult, view]);
 
   if (error) return <div className="omni-dashboard"><div role="alert" className="omni-alert">Parliament dataset unavailable ({error}). Run <code>npm run parliament:build</code>.</div></div>;
-  if (!data) return <div className="omni-dashboard omni-parl"><div className="omni-map-loading">Loading the Assemblée…</div></div>;
+  if (!data) return <div className="omni-dashboard omni-parl"><div className="omni-map-loading">{senate ? 'Loading the Senate…' : 'Loading the Assemblée…'}</div></div>;
+  const noun = senate ? 'senators' : 'deputies', Noun = senate ? 'Senators' : 'Deputies', one = senate ? 'senator' : 'deputy';
+  const tabs = senate ? VIEWS.filter(v => SENATE_VIEWS.includes(v[0])) : VIEWS;
+  const full = view === 'insights' || view === 'bills' || view === 'lobby';
 
   const sel = selected != null ? data.deputies[selected] : null;
   const cmp = compare != null ? data.deputies[compare] : null;
   const kv = data.keyVotes[vote];
-  const sceneMode = view === 'hemicycle' ? 'hemicycle' : view === 'forecast' && fc ? 'forecast' : 'galaxy';
+  const sceneMode = view === 'hemicycle' ? 'hemicycle' : view === 'forecast' && fc && !senate ? 'forecast' : 'galaxy';
+  const alt = view === 'cosign' && co && !senate ? co : null;
   const fa = fc?.live[fcSel];
   const pairAgree = sel && cmp ? agreement(selected!, compare!) : null;
   const diverge = sel && cmp ? data.keyVotes.filter(k => k.ballots[selected!] !== '-' && k.ballots[compare!] !== '-' && k.ballots[selected!] !== k.ballots[compare!]).slice(0, 8) : [];
@@ -138,7 +171,7 @@ export default function ParliamentPanel() {
   const deputyCard = (d: typeof sel, i: number) => d && <div className="parl-card">
     <div className="parl-card-head">
       <img src={photo(d.id)} alt="" width={64} height={64} loading="lazy" />
-      <div><h2>{d.name}</h2><p><span className="parl-chip" style={{background: gcolor.get(d.group)}}>{d.group}</span> {d.dept} · {d.circo}<sup>e</sup> circ.</p></div>
+      <div><h2>{d.name}</h2><p><span className="parl-chip" style={{background: gcolor.get(d.group)}}>{d.group}</span> {d.dept}{d.circo ? <> · {d.circo}<sup>e</sup> circ.</> : null}</p></div>
     </div>
     <dl className="parl-stats">
       <div><dt>Group loyalty</dt><dd>{pct(d.loyalty)}</dd></div>
@@ -150,37 +183,39 @@ export default function ParliamentPanel() {
     {d.bridge && data.deputies[d.bridge[0]].group !== d.group && <p className="parl-bridge">Closest ally outside {d.group}: <button onClick={() => setSelected(d.bridge![0])}>{data.deputies[d.bridge[0]].name} ({data.deputies[d.bridge[0]].group})</button> — {pct(d.bridge[1])} agreement</p>}
     <div className="parl-actions">
       <button onClick={() => { setView('compare'); setCompare(null); }}>⇄ Compare with…</button>
-      <a href={anPage(d.id)} target="_blank" rel="noreferrer">Assemblée profile ↗</a>
+      {!senate && <a href={anPage(d.id)} target="_blank" rel="noreferrer">Assemblée profile ↗</a>}
     </div>
     {d.job && <p className="parl-muted">{d.job}{d.born ? ` · born ${d.born.slice(0, 4)}` : ''} · seat {d.seat || '—'} · #{i + 1}</p>}
   </div>;
 
   return <div className="omni-dashboard omni-parl">
     <div className="omni-heading">
-      <div><p className="omni-eyebrow">05 / PARLIAMENT</p><h1>Who votes with whom.</h1>
-        <p className="omni-subtitle">{data.deputies.length} deputies placed in 3D by how they actually vote, across {data.scrutins.toLocaleString('en-GB')} recorded divisions of the {data.legislature}th legislature. Close stars vote alike.</p></div>
-      <div className="omni-heading-actions"><span className="omni-freshness">Assemblée nationale<small>Data through {data.range[1]}</small></span></div>
+      <div><p className="omni-eyebrow">05 / PARLIAMENT</p><h1>{HEAD[view]?.[0] || 'Who votes with whom.'}</h1>
+        <p className="omni-subtitle">{HEAD[view]?.[1] || <>{data.deputies.length} {noun} placed in 3D by how they actually vote, across {data.scrutins.toLocaleString('en-GB')} recorded divisions {senate ? 'since the 2023 renewal' : `of the ${data.legislature}th legislature`}. Close stars vote alike.</>}</p></div>
+      <div className="omni-heading-actions"><span className="omni-freshness">{senate ? 'Sénat' : 'Assemblée nationale'}<small>Data through {data.range[1]}</small></span>
+        <div className="x-chamber" role="group" aria-label="Chamber"><button aria-pressed={!senate} onClick={() => switchChamber('an')}>Assemblée</button><button aria-pressed={senate} onClick={() => switchChamber('senate')}>Sénat</button></div></div>
     </div>
-    <div className="parl-views" role="tablist">{VIEWS.map(([id, label, mark]) => <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)}><span aria-hidden>{mark}</span>{label}</button>)}</div>
-    {view === 'insights' ? <div className="ins-wrap"><Insights data={data} onPick={i => { setSelected(i); setView('galaxy'); }} /></div> :
+    <div className="parl-views" role="tablist">{tabs.map(([id, label, mark]) => <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)}><span aria-hidden>{mark}</span>{label}</button>)}</div>
+    {full ? <div className="ins-wrap">{view === 'bills' ? <Bills onForecast={() => setView('forecast')} /> : view === 'lobby' ? <Interests /> : <Insights data={data} onPick={i => { setSelected(i); setView('galaxy'); }} />}</div> :
     <div className="omni-workspace parl-workspace">
       <aside className="omni-sidebar">
-        {view === 'forecast' && fc ? <ForecastList fc={fc} data={data} sel={fcSel} onSel={i => { setFcSel(i); setOverlay(null); }} sort={fcSort} setSort={setFcSort} />
+        {view === 'cosign' && co ? <CosignSidebar co={co} data={data} selected={selected} onPick={setSelected} />
+        : view === 'forecast' && fc ? <ForecastList fc={fc} data={data} sel={fcSel} onSel={i => { setFcSel(i); setOverlay(null); }} sort={fcSort} setSort={setFcSort} />
         : view === 'hemicycle' ? <>
           <div className="omni-sidebar-top"><div className="omni-section-label">Solemn and final votes <span>{data.keyVotes.length}</span></div></div>
           <div className="omni-record-list">{data.keyVotes.map((k, i) => <button key={k.n} className="parl-vote-row" aria-pressed={i === vote} onClick={() => setVote(i)}>
             <small>{k.date} · n°{k.n} · <b className={k.sort === 'adopté' ? 'ok' : 'ko'}>{k.sort}</b></small><span>{cap(k.title)}</span></button>)}</div>
         </> : view === 'quiz' ? <>
           <div className="omni-sidebar-top"><div className="omni-section-label">Your vote <span>{Object.keys(answers).length}/{quizVotes.length}</span></div>
-            <p className="parl-muted">Vote on the latest final readings. We find the deputies and groups who voted like you.</p></div>
+            <p className="parl-muted">Vote on the latest final readings. We find the {noun} and groups who voted like you.</p></div>
           <div className="omni-record-list">{quizVotes.map((k, qi) => <div key={k.n} className="parl-quiz">
             <small>{k.date} · <b className={k.sort === 'adopté' ? 'ok' : 'ko'}>{k.sort}</b></small><p>{cap(k.title)}</p>
             <div>{(['p', 'c', 'a'] as const).map(b => <button key={b} data-b={b} aria-pressed={answers[qi] === b} onClick={() => setAnswers(a => ({...a, [qi]: a[qi] === b ? '' : b}))}>{BALLOT_LABEL[b]}</button>)}</div>
           </div>)}</div>
         </> : <>
           <div className="omni-sidebar-top">
-            <div className="omni-section-label">{view === 'compare' ? 'Pick two deputies' : 'Deputies'} <span>{list.length}</span></div>
-            <input className="omni-search" placeholder="Name, département, group…" value={query} onChange={e => setQuery(e.target.value)} aria-label="Search deputies" />
+            <div className="omni-section-label">{view === 'compare' ? `Pick two ${noun}` : Noun} <span>{list.length}</span></div>
+            <input className="omni-search" placeholder="Name, département, group…" value={query} onChange={e => setQuery(e.target.value)} aria-label={`Search ${noun}`} />
             <div className="parl-groups">{data.groups.map(g => <button key={g.id} aria-pressed={group === g.id} onClick={() => setGroup(group === g.id ? null : g.id)} title={g.name}><i style={{background: g.color}} />{g.id}<small>{g.size}</small></button>)}</div>
           </div>
           <div className="omni-record-list">{list.slice(0, 250).map(({d, i}) => <button key={d.id} className="parl-dep-row" aria-pressed={i === selected || i === compare} onClick={() => pickDeputy(i)}>
@@ -189,7 +224,7 @@ export default function ParliamentPanel() {
       </aside>
 
       <section className="omni-map-area parl-stage">
-        <Scene3D data={data} mode={sceneMode} period={view === 'galaxy' ? period : -1} selected={selected} compare={compare}
+        <Scene3D key={`${chamber}-${alt ? 'co' : 'v'}`} alt={alt} data={data} mode={sceneMode} period={view === 'galaxy' ? period : -1} selected={selected} compare={compare}
           ballots={view === 'hemicycle' ? kv?.ballots ?? null : null} probs={sceneMode === 'forecast' ? fa?.p ?? null : null} confidence={fa?.conf} targets={sceneMode === 'forecast' && fcPane === 'strategy' ? targets : null} highlightGroup={group} showLinks={links} autoRotate={rotate && selected == null}
           onPick={pickDeputy} onHover={(i, x, y) => setHover(i == null ? null : {i, x, y})} />
         {hover && <div className="parl-tip" style={{left: hover.x + 14, top: hover.y + 10}}>
@@ -197,7 +232,7 @@ export default function ParliamentPanel() {
           {sceneMode === 'forecast' && fa ? <em>projected P(for) {fa.p[hover.i]}%</em> : view === 'hemicycle' && kv ? <em>{BALLOT_LABEL[kv.ballots[hover.i]]}</em> : selected != null && hover.i !== selected ? <em>{pct(agreement(selected, hover.i))} agreement with {data.deputies[selected].name}</em> : <em>loyalty {pct(data.deputies[hover.i].loyalty)}</em>}
         </div>}
         <div className="parl-overlay">
-          {sceneMode === 'galaxy' && <><label><input type="checkbox" checked={links} onChange={e => setLinks(e.target.checked)} /> Twin links</label><span className="parl-legend-gold">— gold: cross-group allies</span></>}
+          {sceneMode === 'galaxy' && <><label><input type="checkbox" checked={links} onChange={e => setLinks(e.target.checked)} /> {alt ? 'Co-signature links' : 'Twin links'}</label><span className="parl-legend-gold">gold: across groups</span></>}
           <label><input type="checkbox" checked={rotate} onChange={e => setRotate(e.target.checked)} /> Orbit</label>
           {view === 'hemicycle' && <span className="parl-ballot-legend">{(['p', 'c', 'a', '-'] as const).map(b => <span key={b} data-b={b}>{BALLOT_LABEL[b]} {counts[b] || 0}</span>)}</span>}
         </div>
@@ -208,7 +243,7 @@ export default function ParliamentPanel() {
         </div>}
         {view === 'forecast' && fc && overlay === 'track' && <TrackRecord fc={fc} data={data} onClose={() => setOverlay(null)} />}
         {view === 'forecast' && fc && overlay === 'signals' && <SignalsRadar fc={fc} onClose={() => setOverlay(null)} />}
-        {view === 'galaxy' && <div className="omni-timeline parl-timeline">
+        {view === 'galaxy' && data.periods.length > 0 && <div className="omni-timeline parl-timeline">
           <button onClick={() => { if (period < 0) setPeriod(0); setPlaying(p => !p); }} aria-label={playing ? 'Pause' : 'Play'}>{playing ? '❚❚' : '▶'}</button>
           <div className="omni-timeline-title"><strong>{period < 0 ? 'Whole legislature' : data.periods[period].id.replace('-', ' · ')}</strong><small>{period < 0 ? `${data.range[0]} → ${data.range[1]}` : `${data.periods[period].scrutins} divisions this quarter`}</small></div>
           <input className="omni-timeline-slider" type="range" min={-1} max={data.periods.length - 1} value={period} onChange={e => { setPlaying(false); setPeriod(+e.target.value); }} aria-label="Quarter" />
@@ -216,7 +251,8 @@ export default function ParliamentPanel() {
       </section>
 
       <aside className="omni-detail parl-detail">
-        {view === 'forecast' && fa && fc ? <>
+        {view === 'cosign' && co ? <CosignDetail co={co} data={data} selected={selected} onPick={setSelected} />
+        : view === 'forecast' && fa && fc && !senate ? <>
           <div className="parl-seg fc-panes">{([['forecast', '◉ Forecast'], ['strategy', '⚑ Strategy']] as const).map(([k, l]) => <button key={k} aria-pressed={fcPane === k} onClick={() => setFcPane(k)}>{l}</button>)}</div>
           {fcPane === 'strategy' ? (strat ? <StrategyPanel data={data} a={fa} goal={goal} setGoal={setGoal} pl={strat} onPick={setSelected} selected={selected} /> : <p className="parl-muted">Computing…</p>)
           : <ForecastDetail fc={fc} data={data} a={fa} selected={selected} agreement={agreement} onOpen={() => setView('galaxy')} onClear={() => setSelected(null)} />}
@@ -231,16 +267,16 @@ export default function ParliamentPanel() {
             data.deputies.forEach((d, i) => { if (d.group === g.id) c[kv.ballots[i]]++; });
             return <div key={g.id} className="parl-bar"><span style={{color: tc(g.color)}}>{g.id}</span><div>{(['p', 'c', 'a', '-'] as const).map(b => <i key={b} data-b={b} style={{flex: c[b]}} title={`${BALLOT_LABEL[b]}: ${c[b]}`} />)}</div></div>;
           })}</div>
-          <a href={scrutinPage(kv.n)} target="_blank" rel="noreferrer">Official record ↗</a>
+          <a href={voteUrl(kv)} target="_blank" rel="noreferrer">Official record ↗</a>
           {sel && <p className="parl-muted">{sel.name}: <b>{BALLOT_LABEL[kv.ballots[selected!]]}</b></p>}
         </div>
         : view === 'compare' ? <div className="parl-card">
           <p className="omni-eyebrow">Voting comparator</p>
-          {!sel ? <p className="parl-muted">Pick a first deputy in the list or the galaxy.</p> : !cmp ? <><h2>{sel.name}</h2><p className="parl-muted">Now pick a second deputy. The dashed gold line will join them in space.</p></> : <>
+          {!sel ? <p className="parl-muted">Pick a first {one} in the list or the galaxy.</p> : !cmp ? <><h2>{sel.name}</h2><p className="parl-muted">Now pick a second {one}. The dashed gold line will join them in space.</p></> : <>
             <div className="parl-vs">{[sel, cmp].map((d, k) => <button key={d.id} onClick={() => k ? setCompare(null) : (setSelected(compare), setCompare(null))}><img src={photo(d.id)} alt="" width={56} height={56} /><b>{d.name}</b><small style={{color: tc(gcolor.get(d.group))}}>{d.group}</small></button>)}</div>
             <div className="parl-big">{pct(pairAgree)}<small>identical positions when both voted</small></div>
             <div className="omni-section-label">Where they split on final and solemn votes</div>
-            {diverge.length ? <ul className="parl-split">{diverge.map(k => <li key={k.n}><a href={scrutinPage(k.n)} target="_blank" rel="noreferrer">{cap(k.title)}</a><span><b data-b={k.ballots[selected!]}>{BALLOT_LABEL[k.ballots[selected!]]}</b> vs <b data-b={k.ballots[compare!]}>{BALLOT_LABEL[k.ballots[compare!]]}</b></span></li>)}</ul> : <p className="parl-muted">No disagreement on key votes they both cast.</p>}
+            {diverge.length ? <ul className="parl-split">{diverge.map(k => <li key={k.n}><a href={voteUrl(k)} target="_blank" rel="noreferrer">{cap(k.title)}</a><span><b data-b={k.ballots[selected!]}>{BALLOT_LABEL[k.ballots[selected!]]}</b> vs <b data-b={k.ballots[compare!]}>{BALLOT_LABEL[k.ballots[compare!]]}</b></span></li>)}</ul> : <p className="parl-muted">No disagreement on key votes they both cast.</p>}
           </>}
         </div>
         : view === 'quiz' ? <div className="parl-card">
@@ -248,18 +284,18 @@ export default function ParliamentPanel() {
           {!quizResult ? <p className="parl-muted">Answer at least 3 votes. Results update live and your best match lights up in the galaxy.</p> : <>
             <div className="omni-section-label">Groups</div>
             <div className="parl-bars">{quizResult.groups.map(({g, score}) => <div key={g.id} className="parl-bar"><span style={{color: tc(g.color)}}>{g.id}</span><div><i style={{flex: score, background: g.color}} /><i style={{flex: 1 - score}} data-b="-" /></div><b>{pct(score)}</b></div>)}</div>
-            <div className="omni-section-label">Deputies</div>
+            <div className="omni-section-label">{Noun}</div>
             <ul className="parl-near">{quizResult.top.map(({i, score, n}) => <li key={i}><button onClick={() => setSelected(i)}><span className="omni-topic-dot" style={{background: gcolor.get(data.deputies[i].group)}} />{data.deputies[i].name}<small>{data.deputies[i].group} · {n} votes</small><b>{pct(score)}</b></button></li>)}</ul>
           </>}
         </div>
         : sel ? deputyCard(sel, selected!)
         : <div className="parl-card">
-          <p className="omni-eyebrow">Group affinities, {period < 0 ? 'whole legislature' : data.periods[period].id}</p>
+          <p className="omni-eyebrow">Group affinities, {senate ? 'since 2023' : period < 0 ? 'whole legislature' : data.periods[period].id}</p>
           <p className="parl-muted">Share of divisions where both groups' majority positions matched.</p>
           <GroupMatrix data={data} rows={groupMatrix} />
-          <p className="parl-muted">Click a star, or press ▶ to watch coalitions move quarter by quarter.</p>
+          <p className="parl-muted">{senate ? 'Click a star to open a senator.' : 'Click a star, or press ▶ to watch coalitions move quarter by quarter.'}</p>
         </div>}
-        <p className="parl-source">Source: <a href={data.source.url} target="_blank" rel="noreferrer">{data.source.name}</a> — {data.source.license}. {data.method}</p>
+        {view !== 'cosign' && <p className="parl-source">Source: <a href={data.source.url} target="_blank" rel="noreferrer">{data.source.name}</a> — {data.source.license}. {data.method}</p>}
       </aside>
     </div>}
   </div>;

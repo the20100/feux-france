@@ -1,93 +1,2023 @@
 {
-  "fetchedAt": "2026-11-14T11:52:18Z",
-  "source": {"name": "Hémicycle — Orcet (orcet_predictions, orcet_previsions_votes, signaux_faibles)", "url": "https://hemicycle.ai/modeles/orcet", "license": "Tous usages, avec mention de la source « Hémicycle »"},
-  "text": {"uid": "PRJLANR5L17B3211", "title": "Projet de loi de financement de la sécurité sociale pour 2027", "short": "PLFSS 2027"},
-  "live": [
-    {"uid":"AMANR5L17PO838901B3211P0D1N003180","n":"3180","mean":0.3955,"conf":0.8239,"author":"PA346782","group":"PO845425","signers":"M. Juvin, M. Bazin et M. Valletoux","article":"APRÈS ART. 35","summary":"Aligner les droits à pension des médecins civils de la BSPP sur ceux des médecins sapeurs-pompiers professionnels (bonification du cinquième, indemnité de feu), avec rattrapage depuis 2004.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003145","n":"3145","mean":0.5841,"conf":0.7944,"author":null,"group":"GOV","signers":"le Gouvernement","article":"APRÈS ART. 35","summary":"Mettre fin à l'inégalité de traitement des médecins civils de la BSPP : catégorie active, bonification du cinquième depuis 2004 et indemnité de feu dans la pension.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003141","n":"3141","mean":0.8055,"conf":0.6157,"author":"PA795350","group":"PO845470","signers":"M. Valletoux","article":"APRÈS ART. 29","summary":"Expérimenter trois ans, dans trois régions, la prescription d'activité physique adaptée par les sages-femmes pendant la grossesse et le post-partum.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003140","n":"3140","mean":0.4071,"conf":0.6991,"author":"PA841595","group":"PO845425","signers":"Mme Chazé","article":"APRÈS ART. 20","summary":"Dispositif proactif d'information et d'orientation psychologique pour les moins de 30 ans endeuillés par une mort violente d'un proche.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003139","n":"3139","mean":0.3474,"conf":0.9876,"author":"PA840947","group":"PO845439","signers":"Mme Catherine Hervieu et 36 cosignataires (Écologiste et Social)","article":"APRÈS ART. 20","summary":"Permettre aux pédiatres de prescrire directement le parcours de bilan et d'intervention précoce des troubles du neurodéveloppement, pour désengorger les plateformes (jusqu'à 9 mois d'attente).","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003138","n":"3138","mean":0.3548,"conf":0.986,"author":"PA842211","group":"PO845419","signers":"Mme Bellay","article":"ART. 25","summary":"Tenir compte des contraintes ultramarines (insularité, éloignement) dans les conventions des unités d'accueil pédiatrique de l'enfance en danger.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003136","n":"3136","mean":0.4071,"conf":0.6991,"author":"PA841595","group":"PO845425","signers":"Mme Chazé","article":"APRÈS ART. 20","summary":"Délai maximal de 30 jours pour un premier rendez-vous d'évaluation psychologique des moins de 25 ans confrontés à une mort violente dans leur entourage.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003134","n":"3134","mean":0.3548,"conf":0.986,"author":"PA842211","group":"PO845419","signers":"Mme Bellay","article":"APRÈS ART. 25","summary":"Évaluation territorialisée des moyens, délais et conditions d'accès aux UAPED et aux soins du psychotraumatisme, notamment outre-mer.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003133","n":"3133","mean":0.4071,"conf":0.6991,"author":"PA841595","group":"PO845425","signers":"Mme Chazé","article":"APRÈS ART. 20","summary":"Parcours de soutien psychologique intégralement pris en charge pour les moins de 25 ans confrontés à un décès violent dans leur entourage.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003132","n":"3132","mean":0.4071,"conf":0.6991,"author":"PA841595","group":"PO845425","signers":"Mme Chazé, M. Bonnefoy, Mme Duby-Muller et M. Ray","article":"APRÈS ART. 24","summary":"Intégrer systématiquement la santé mentale dans l'entretien de préparation à l'autonomie des jeunes de l'aide sociale à l'enfance.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003126","n":"3126","mean":0.4071,"conf":0.6991,"author":"PA309643","group":"PO840056","signers":"Mme Besse","article":"APRÈS ART. 39","summary":"Rapport sur les financements du répit des proches aidants et le coût de sa généralisation à tous les aidants.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003125","n":"3125","mean":0.3548,"conf":0.986,"author":"PA842211","group":"PO845419","signers":"Mme Bellay","article":"ART. 25","summary":"Évaluation territorialisée de l'accès réel aux UAPED et aux équipes pédiatriques référentes (objectif de 164 unités en 2027).","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003124","n":"3124","mean":0.4071,"conf":0.6991,"author":"PA309643","group":"PO840056","signers":"Mme Besse","article":"APRÈS ART. 21","summary":"Rapport sur la répartition territoriale des crédits de santé mentale et leur effet pour les jeunes ruraux.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003122","n":"3122","mean":0.8055,"conf":0.6157,"author":"PA795350","group":"PO845470","signers":"M. Valletoux","article":"APRÈS ART. 35","summary":"Abroger la suspension de la réforme des retraites de 2023.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003121","n":"3121","mean":0.3548,"conf":0.986,"author":"PA842211","group":"PO845419","signers":"Mme Bellay","article":"APRÈS ART. 44","summary":"Chlordécone : ramener à neuf mois le rapport sur l'extension du fonds d'indemnisation, avec scénarios juridiques et financiers opérationnels.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003119","n":"3119","mean":0.3548,"conf":0.986,"author":"PA842211","group":"PO845419","signers":"Mme Bellay","article":"ART. 20","summary":"Prendre en compte les arrêts répétés liés à l'endométriose et aux affections chroniques dans le risque de désinsertion professionnelle.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003118","n":"3118","mean":0.3664,"conf":0.5929,"author":"PA720560","group":"PO845454","signers":"Mme Perrine Goulet","article":"APRÈS ART. 20","summary":"Complémentaire santé solidaire gratuite pour les mineurs placés, renouvelée automatiquement jusqu'à 21 ans.","state":"A discuter"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003117","n":"3117","mean":0.4071,"conf":0.6991,"author":"PA309643","group":"PO840056","signers":"Mme Besse","article":"ART. 43","summary":"Relever de 6 % (1,128 Md€) le sous-objectif Ondam des établissements pour personnes âgées, à Ondam total inchangé.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003116","n":"3116","mean":0.4572,"conf":0.7293,"author":"PA642847","group":"PO845425","signers":"M. Bazin","article":"ART. 35","summary":"Amendement rédactionnel.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003114","n":"3114","mean":0.3548,"conf":0.986,"author":"PA842211","group":"PO845419","signers":"Mme Bellay","article":"ART. 20","summary":"Associer, avec l'accord de l'assuré, une association conventionnée aux réunions de prévention de la désinsertion professionnelle.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003113","n":"3113","mean":0.4572,"conf":0.7293,"author":"PA642847","group":"PO845425","signers":"M. Bazin","article":"ART. 29","summary":"Dépistage du cancer du sein : conditionner les autorisations d'IRM/scanner à la participation, supprimer réquisitions et sanctions individuelles.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003112","n":"3112","mean":0.4071,"conf":0.6991,"author":"PA841595","group":"PO845425","signers":"Mme Chazé, M. Bonnefoy, Mme Duby-Muller et M. Ray","article":"APRÈS ART. 24","summary":"Prise en charge intégrale du soutien psychologique pendant trois ans après la sortie de l'aide sociale à l'enfance.","state":"En traitement"},
-    {"uid":"AMANR5L17PO838901B3211P0D1N003111","n":"3111","mean":0.4572,"conf":0.7293,"author":"PA642847","group":"PO845425","signers":"M. Bazin","article":"ART. 27","summary":"Amendement rédactionnel.","state":"En traitement"}
-  ],
-  "trackRecord": {
-    "note": "Prévisions Orcet émises le 28 juin 2026 pour la séance du 27 juin (nouvelle lecture, proposition de loi relative au droit à l'aide à mourir). Les positions de groupe et les députés à surveiller sont confrontés aux votes réels dans l'open data de l'Assemblée.",
-    "groupsArticles": {"Dem":["pour",97],"DR":["pour",100],"EcoS":["contre",100],"EPR":["pour",98],"GDR":["contre",100],"HOR":["pour",100],"LFI-NFP":["contre",100],"LIOT":["pour",76],"NI":["pour",91],"RN":["pour",100],"SOC":["contre",99],"UDR":["pour",100]},
-    "watchArticles": [["PA643175",40.8,50.6],["PA1592",30.3,45.9],["PA607619",34.3,41.9],["PA720960",52.6,23.7],["PA720976",68.2,8]],
-    "items": [
-      {"scrutin":7751,"label":"Amendement n° 271 (Dubré-Chirat) à l'article 9","type":"amendement","mean":35.16,"sup":191,"inf":378,"mid":7,"conf":83.93,"pour":20,"contre":55,"abst":9,"adopted":false,
-       "groups":{"Dem":["contre",93],"DR":["pour",86],"EcoS":["contre",100],"EPR":["contre",96],"GDR":["contre",99],"HOR":["contre",82],"LFI-NFP":["contre",100],"LIOT":["contre",83],"NI":["divise",45],"RN":["pour",100],"SOC":["contre",99],"UDR":["pour",100]},
-       "watch":[["PA796078",63.5,46.9],["PA607553",43.4,42.7],["PA841339",53.5,36],["PA2952",47.3,30.6],["PA721486",42.6,26],["PA793992",41.3,23.7],["PA332228",41.1,23.5],["PA794038",62.3,23.4],["PA794470",37.4,19.8],["PA642725",69,16.7]]},
-      {"scrutin":7797,"label":"Amendement n° 2 (Simion) à l'article 15","type":"amendement","mean":34.21,"sup":190,"inf":382,"mid":4,"conf":92.24,"pour":19,"contre":63,"abst":3,"adopted":false,
-       "groups":{"Dem":["contre",97],"DR":["pour",92],"EcoS":["contre",100],"EPR":["contre",97],"GDR":["contre",100],"HOR":["contre",88],"LFI-NFP":["contre",100],"LIOT":["contre",95],"NI":["divise",49],"RN":["pour",100],"SOC":["contre",100],"UDR":["pour",100]},
-       "watch":[["PA841339",69.7,57.2],["PA795050",41.4,38.8],["PA793992",45.2,32.7],["PA721336",33.5,30.8],["PA722102",32.7,30.1],["PA794470",42.1,29.6],["PA267200",30.9,28.3],["PA794038",65,27.4],["PA332228",35.5,23],["PA842125",34.9,22.5]]},
-      {"scrutin":7761,"label":"Amendement n° 605 (Hetzel) à l'article 9","type":"amendement","mean":40.57,"sup":230,"inf":340,"mid":6,"conf":91.06,"pour":31,"contre":60,"abst":1,"adopted":false,
-       "groups":{"Dem":["contre",86],"DR":["pour",98],"EcoS":["contre",100],"EPR":["contre",87],"GDR":["contre",100],"HOR":["divise",48],"LFI-NFP":["contre",100],"LIOT":["contre",76],"NI":["pour",69],"RN":["pour",100],"SOC":["contre",100],"UDR":["pour",100]},
-       "watch":[["PA267318",64,49.6],["PA722374",52.6,38.2],["PA817203",50.7,37.6],["PA719272",62.3,36.1],["PA841151",62.5,35.9]]},
-      {"scrutin":7744,"label":"Article 8","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":57,"contre":27,"abst":0,"adopted":true},
-      {"scrutin":7762,"label":"Article 9","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":63,"contre":28,"abst":1,"adopted":true},
-      {"scrutin":7788,"label":"Article 12","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":60,"contre":31,"abst":0,"adopted":true},
-      {"scrutin":7796,"label":"Article 14","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":76,"contre":0,"abst":12,"adopted":true},
-      {"scrutin":7800,"label":"Article 15","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":58,"contre":30,"abst":0,"adopted":true},
-      {"scrutin":7802,"label":"Article 16","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":54,"contre":26,"abst":2,"adopted":true},
-      {"scrutin":7812,"label":"Article 18","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":59,"contre":10,"abst":14,"adopted":true},
-      {"scrutin":7814,"label":"Article 19","type":"article","mean":64.8,"sup":376,"inf":198,"mid":2,"conf":94.21,"pour":59,"contre":21,"abst":1,"adopted":true},
-      {"scrutin":7815,"label":"Article 19 bis","type":"article","mean":65.09,"sup":377,"inf":196,"mid":3,"conf":94.05,"pour":56,"contre":21,"abst":1,"adopted":true,
-       "watch":[["PA793214",34.3,45.3],["PA793796",38,41.5],["PA1592",43.8,35.7],["PA643175",62.3,32.1],["PA607619",48.1,31.4],["PA720960",56.8,22.7],["PA720976",65.4,14.1]]}
-    ]
+ "fetchedAt": "2026-11-14T14:53:42Z",
+ "source": {
+  "name": "Hémicycle — Orcet (orcet_predictions, orcet_previsions_votes, signaux_faibles)",
+  "url": "https://hemicycle.ai/modeles/orcet",
+  "license": "Tous usages, avec mention de la source « Hémicycle »"
+ },
+ "text": {
+  "uid": "PRJLANR5L17B3211",
+  "title": "Projet de loi de financement de la sécurité sociale pour 2027",
+  "short": "PLFSS 2027"
+ },
+ "live": [
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003180",
+   "n": "3180",
+   "mean": 0.3955,
+   "conf": 0.8239,
+   "author": "PA346782",
+   "group": "PO845425",
+   "signers": "M. Juvin, M. Bazin et M. Valletoux",
+   "article": "APRÈS ART. 35",
+   "summary": "Aligner les droits à pension des médecins civils de la BSPP sur ceux des médecins sapeurs-pompiers professionnels (bonification du cinquième, indemnité de feu), avec rattrapage depuis 2004.",
+   "state": "En traitement"
   },
-  "signals": [
-    {"t":"Texte n° 3188 de la commission — poussée d'amendements","s":100,"trend":"critique","cat":"legislatif","cur":951,"base":5.63},
-    {"t":"Texte n° 3188, article 4 : 151 amendements en 7 jours","s":100,"trend":"critique","cat":"legislatif","cur":151,"base":0,"ev":[0,0,0,0,0,0,0,24,0,0,0,22,3,102]},
-    {"t":"Texte n° 3188, article 6 : 142 amendements en 7 jours","s":100,"trend":"critique","cat":"legislatif","cur":142,"base":0,"ev":[0,0,0,0,0,0,0,27,0,0,2,20,3,90]},
-    {"t":"Texte n° 3188, article premier : 93 amendements en 7 jours","s":99,"trend":"critique","cat":"legislatif","cur":93,"base":0,"ev":[0,0,0,0,0,0,0,1,0,0,0,7,3,82]},
-    {"t":"PLFG 2026, art. 5 (Recherche et enseignement supérieur) : 13 amendements","s":87,"trend":"montant","cat":"legislatif","cur":13,"base":0,"ev":[0,0,0,0,0,0,0,3,0,0,10,0,0,0]},
-    {"t":"PLFG 2026, art. 5 (Écologie, mobilité durables) : 13 amendements","s":85,"trend":"montant","cat":"legislatif","cur":13,"base":0.03,"ev":[0,0,0,0,0,0,1,4,0,0,9,0,0,0]},
-    {"t":"Fonction publique","s":100,"trend":"critique","cat":"mediatique","cur":15,"base":0.82,"ev":[2,0,0,0,1,0,0,4,0,0,5,14,1]},
-    {"t":"Services publics","s":100,"trend":"critique","cat":"mediatique","cur":13,"base":0.38,"ev":[0,0,1,3,0,0,0,0,0,0,14]},
-    {"t":"Élection","s":100,"trend":"montant","cat":"mediatique","cur":5,"base":0.55,"ev":[1,2,2,0,1,3,1,5,5]},
-    {"t":"Salaires","s":100,"trend":"montant","cat":"mediatique","cur":5,"base":0.55,"ev":[1,1,1,3,4,0,2,5]},
-    {"t":"Droit","s":99,"trend":"montant","cat":"mediatique","cur":3,"base":0.48,"ev":[2,2,1,0,0,1,4,0,2,3]},
-    {"t":"Démocratie","s":97,"trend":"montant","cat":"mediatique","cur":5,"base":0.99,"ev":[2,0,0,2,0,0,2,5,0,3,4,1]},
-    {"t":"Diplomatie","s":96,"trend":"montant","cat":"mediatique","cur":13,"base":3.52,"ev":[3,1,1,2,2,5,4,2,3,0,4,8,8,14]},
-    {"t":"Mouvements sociaux","s":92,"trend":"montant","cat":"mediatique","cur":3,"base":0.61,"ev":[1,1,3,3,0,0,0,0,0,1,0,3]},
-    {"t":"Dialogue social","s":92,"trend":"montant","cat":"mediatique","cur":3,"base":0.61,"ev":[2,3,1,0,5,2,0,0,3]},
-    {"t":"Transports","s":88,"trend":"montant","cat":"mediatique","cur":5,"base":1.3,"ev":[1,0,0,2,1,3,4,5,0,0,1,2,2,4,1]},
-    {"t":"Technologie","s":88,"trend":"montant","cat":"mediatique","cur":7,"base":1.98,"ev":[2,0,0,6,3,5,3,0,0,2,3,3,7]},
-    {"t":"Éducation","s":80,"trend":"montant","cat":"mediatique","cur":3,"base":0.85,"ev":[1,1,3,0,3,0,2,1,2,5,2,3,3]},
-    {"t":"Logement","s":79,"trend":"montant","cat":"mediatique","cur":4,"base":1.26,"ev":[2,3,1,1,1,1,0,2,1,0,4,1,2,4]},
-    {"t":"International","s":76,"trend":"montant","cat":"mediatique","cur":12,"base":5.98,"ev":[8,3,3,7,8,11,1,6,3,8,8,4,1,12]},
-    {"t":"Union européenne","s":73,"trend":"montant","cat":"mediatique","cur":4,"base":1.54,"ev":[1,1,1,3,1,5,4,1,0,1,4,1,0,4]},
-    {"t":"Constitution","s":71,"trend":"montant","cat":"mediatique","cur":3,"base":1.13,"ev":[1,1,1,2,0,0,0,1,0,3,1,3]},
-    {"t":"Géopolitique","s":68,"trend":"montant","cat":"mediatique","cur":4,"base":1.81,"ev":[2,4,2,4,0,0,1,1,0,0,6,0,0,4]},
-    {"t":"Climat","s":66,"trend":"montant","cat":"mediatique","cur":4,"base":1.91,"ev":[3,1,2,4,2,1,1,0,1,4,1,0,1,5]},
-    {"t":"Terrorisme","s":65,"trend":"montant","cat":"mediatique","cur":3,"base":1.4,"ev":[2,2,0,1,1,1,0,0,0,1,0,0,3]}
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003145",
+   "n": "3145",
+   "mean": 0.5841,
+   "conf": 0.7944,
+   "author": null,
+   "group": "GOV",
+   "signers": "le Gouvernement",
+   "article": "APRÈS ART. 35",
+   "summary": "Mettre fin à l'inégalité de traitement des médecins civils de la BSPP : catégorie active, bonification du cinquième depuis 2004 et indemnité de feu dans la pension.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003141",
+   "n": "3141",
+   "mean": 0.8055,
+   "conf": 0.6157,
+   "author": "PA795350",
+   "group": "PO845470",
+   "signers": "M. Valletoux",
+   "article": "APRÈS ART. 29",
+   "summary": "Expérimenter trois ans, dans trois régions, la prescription d'activité physique adaptée par les sages-femmes pendant la grossesse et le post-partum.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003140",
+   "n": "3140",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA841595",
+   "group": "PO845425",
+   "signers": "Mme Chazé",
+   "article": "APRÈS ART. 20",
+   "summary": "Dispositif proactif d'information et d'orientation psychologique pour les moins de 30 ans endeuillés par une mort violente d'un proche.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003139",
+   "n": "3139",
+   "mean": 0.3474,
+   "conf": 0.9876,
+   "author": "PA840947",
+   "group": "PO845439",
+   "signers": "Mme Catherine Hervieu et 36 cosignataires (Écologiste et Social)",
+   "article": "APRÈS ART. 20",
+   "summary": "Permettre aux pédiatres de prescrire directement le parcours de bilan et d'intervention précoce des troubles du neurodéveloppement, pour désengorger les plateformes (jusqu'à 9 mois d'attente).",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003138",
+   "n": "3138",
+   "mean": 0.3548,
+   "conf": 0.986,
+   "author": "PA842211",
+   "group": "PO845419",
+   "signers": "Mme Bellay",
+   "article": "ART. 25",
+   "summary": "Tenir compte des contraintes ultramarines (insularité, éloignement) dans les conventions des unités d'accueil pédiatrique de l'enfance en danger.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003136",
+   "n": "3136",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA841595",
+   "group": "PO845425",
+   "signers": "Mme Chazé",
+   "article": "APRÈS ART. 20",
+   "summary": "Délai maximal de 30 jours pour un premier rendez-vous d'évaluation psychologique des moins de 25 ans confrontés à une mort violente dans leur entourage.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003134",
+   "n": "3134",
+   "mean": 0.3548,
+   "conf": 0.986,
+   "author": "PA842211",
+   "group": "PO845419",
+   "signers": "Mme Bellay",
+   "article": "APRÈS ART. 25",
+   "summary": "Évaluation territorialisée des moyens, délais et conditions d'accès aux UAPED et aux soins du psychotraumatisme, notamment outre-mer.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003133",
+   "n": "3133",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA841595",
+   "group": "PO845425",
+   "signers": "Mme Chazé",
+   "article": "APRÈS ART. 20",
+   "summary": "Parcours de soutien psychologique intégralement pris en charge pour les moins de 25 ans confrontés à un décès violent dans leur entourage.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003132",
+   "n": "3132",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA841595",
+   "group": "PO845425",
+   "signers": "Mme Chazé, M. Bonnefoy, Mme Duby-Muller et M. Ray",
+   "article": "APRÈS ART. 24",
+   "summary": "Intégrer systématiquement la santé mentale dans l'entretien de préparation à l'autonomie des jeunes de l'aide sociale à l'enfance.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003126",
+   "n": "3126",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA309643",
+   "group": "PO840056",
+   "signers": "Mme Besse",
+   "article": "APRÈS ART. 39",
+   "summary": "Rapport sur les financements du répit des proches aidants et le coût de sa généralisation à tous les aidants.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003125",
+   "n": "3125",
+   "mean": 0.3548,
+   "conf": 0.986,
+   "author": "PA842211",
+   "group": "PO845419",
+   "signers": "Mme Bellay",
+   "article": "ART. 25",
+   "summary": "Évaluation territorialisée de l'accès réel aux UAPED et aux équipes pédiatriques référentes (objectif de 164 unités en 2027).",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003124",
+   "n": "3124",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA309643",
+   "group": "PO840056",
+   "signers": "Mme Besse",
+   "article": "APRÈS ART. 21",
+   "summary": "Rapport sur la répartition territoriale des crédits de santé mentale et leur effet pour les jeunes ruraux.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003122",
+   "n": "3122",
+   "mean": 0.8055,
+   "conf": 0.6157,
+   "author": "PA795350",
+   "group": "PO845470",
+   "signers": "M. Valletoux",
+   "article": "APRÈS ART. 35",
+   "summary": "Abroger la suspension de la réforme des retraites de 2023.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003121",
+   "n": "3121",
+   "mean": 0.3548,
+   "conf": 0.986,
+   "author": "PA842211",
+   "group": "PO845419",
+   "signers": "Mme Bellay",
+   "article": "APRÈS ART. 44",
+   "summary": "Chlordécone : ramener à neuf mois le rapport sur l'extension du fonds d'indemnisation, avec scénarios juridiques et financiers opérationnels.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003119",
+   "n": "3119",
+   "mean": 0.3548,
+   "conf": 0.986,
+   "author": "PA842211",
+   "group": "PO845419",
+   "signers": "Mme Bellay",
+   "article": "ART. 20",
+   "summary": "Prendre en compte les arrêts répétés liés à l'endométriose et aux affections chroniques dans le risque de désinsertion professionnelle.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003118",
+   "n": "3118",
+   "mean": 0.3664,
+   "conf": 0.5929,
+   "author": "PA720560",
+   "group": "PO845454",
+   "signers": "Mme Perrine Goulet",
+   "article": "APRÈS ART. 20",
+   "summary": "Complémentaire santé solidaire gratuite pour les mineurs placés, renouvelée automatiquement jusqu'à 21 ans.",
+   "state": "A discuter"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003117",
+   "n": "3117",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA309643",
+   "group": "PO840056",
+   "signers": "Mme Besse",
+   "article": "ART. 43",
+   "summary": "Relever de 6 % (1,128 Md€) le sous-objectif Ondam des établissements pour personnes âgées, à Ondam total inchangé.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003116",
+   "n": "3116",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 35",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003114",
+   "n": "3114",
+   "mean": 0.3548,
+   "conf": 0.986,
+   "author": "PA842211",
+   "group": "PO845419",
+   "signers": "Mme Bellay",
+   "article": "ART. 20",
+   "summary": "Associer, avec l'accord de l'assuré, une association conventionnée aux réunions de prévention de la désinsertion professionnelle.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003113",
+   "n": "3113",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 29",
+   "summary": "Dépistage du cancer du sein : conditionner les autorisations d'IRM/scanner à la participation, supprimer réquisitions et sanctions individuelles.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003112",
+   "n": "3112",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA841595",
+   "group": "PO845425",
+   "signers": "Mme Chazé, M. Bonnefoy, Mme Duby-Muller et M. Ray",
+   "article": "APRÈS ART. 24",
+   "summary": "Prise en charge intégrale du soutien psychologique pendant trois ans après la sortie de l'aide sociale à l'enfance.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003111",
+   "n": "3111",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003110",
+   "n": "3110",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement de coordination juridique.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003109",
+   "n": "3109",
+   "mean": 0.4628,
+   "conf": 0.8582,
+   "author": "PA720976",
+   "group": "PO845485",
+   "signers": "M. Mathiasin et 22 cosignataires (LIOT)",
+   "article": "APRÈS ART. 21",
+   "summary": "Expérimenter, dans au moins trois régions dont un département d'outre-mer, un cadre juridique pour préserver les entreprises de transport de personnes à mobilité réduite.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003108",
+   "n": "3108",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003107",
+   "n": "3107",
+   "mean": 0.3435,
+   "conf": 0.9847,
+   "author": "PA841885",
+   "group": "PO845439",
+   "signers": "M. Arnaud Bonnet et 36 cosignataires (Écologiste et Social)",
+   "article": "APRÈS ART. 25",
+   "summary": "Dispenser d'avance de frais et interdire les dépassements d'honoraires pour les soins des victimes de violences sexuelles subies dans l'enfance.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003106",
+   "n": "3106",
+   "mean": 0.4071,
+   "conf": 0.6991,
+   "author": "PA309643",
+   "group": "PO840056",
+   "signers": "Mme Besse",
+   "article": "APRÈS ART. 20",
+   "summary": "Rembourser intégralement les cannes blanches, sans limite de nombre ni de fréquence.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003105",
+   "n": "3105",
+   "mean": 0.3435,
+   "conf": 0.9847,
+   "author": "PA841885",
+   "group": "PO845439",
+   "signers": "M. Arnaud Bonnet et 36 cosignataires (Écologiste et Social)",
+   "article": "ART. 25",
+   "summary": "Rendre obligatoire le conventionnement des unités d'accueil pédiatrique avec les structures spécialisées dans le psychotraumatisme, et l'ouvrir aux centres médico-psychologiques, aux centres de santé et aux libéraux.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003104",
+   "n": "3104",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003103",
+   "n": "3103",
+   "mean": 0.3435,
+   "conf": 0.9847,
+   "author": "PA841885",
+   "group": "PO845439",
+   "signers": "M. Arnaud Bonnet et 36 cosignataires (Écologiste et Social)",
+   "article": "ART. 29",
+   "summary": "Étendre l'obligation de participation des professionnels de santé aux entretiens prénatal et postnatal et aux examens obligatoires de l'enfant.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003102",
+   "n": "3102",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003101",
+   "n": "3101",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003100",
+   "n": "3100",
+   "mean": 0.3435,
+   "conf": 0.9847,
+   "author": "PA841885",
+   "group": "PO845439",
+   "signers": "M. Arnaud Bonnet et 36 cosignataires (Écologiste et Social)",
+   "article": "APRÈS ART. 25",
+   "summary": "Garantir le secret, sur les relevés de remboursement, des soins liés aux violences sexuelles subies par des mineurs.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003099",
+   "n": "3099",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003098",
+   "n": "3098",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003096",
+   "n": "3096",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003095",
+   "n": "3095",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003094",
+   "n": "3094",
+   "mean": 0.3435,
+   "conf": 0.9847,
+   "author": "PA841885",
+   "group": "PO845439",
+   "signers": "M. Arnaud Bonnet et 36 cosignataires (Écologiste et Social)",
+   "article": "ART. 25",
+   "summary": "Inscrire dans les schémas régionaux de santé les objectifs de 164 unités d'accueil pédiatrique et de deux équipes référentes par région.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003093",
+   "n": "3093",
+   "mean": 0.3435,
+   "conf": 0.9847,
+   "author": "PA841885",
+   "group": "PO845439",
+   "signers": "M. Arnaud Bonnet et 36 cosignataires (Écologiste et Social)",
+   "article": "ART. 25",
+   "summary": "Préciser que les enfants exposés aux violences conjugales relèvent des unités d'accueil pédiatrique, même s'ils n'ont pas été visés directement.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003092",
+   "n": "3092",
+   "mean": 0.3435,
+   "conf": 0.9847,
+   "author": "PA841885",
+   "group": "PO845439",
+   "signers": "M. Arnaud Bonnet et 36 cosignataires (Écologiste et Social)",
+   "article": "ART. 25",
+   "summary": "Permettre aux unités d'accueil pédiatrique de recueillir et de conserver des preuves médico-légales sans dépôt de plainte.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003091",
+   "n": "3091",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003088",
+   "n": "3088",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 27",
+   "summary": "Amendement de coordination juridique.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003085",
+   "n": "3085",
+   "mean": 0.3687,
+   "conf": 0.8801,
+   "author": "PA841381",
+   "group": "PO845419",
+   "signers": "Mme Pantel et 9 cosignataires (Socialistes)",
+   "article": "APRÈS ART. 39",
+   "summary": "Interdire le financement public des EHPAD et des établissements médico-sociaux où les écarts de salaire dépassent un rapport de 1 à 9.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003084",
+   "n": "3084",
+   "mean": 0.3687,
+   "conf": 0.8801,
+   "author": "PA841381",
+   "group": "PO845419",
+   "signers": "Mme Pantel et 9 cosignataires (Socialistes)",
+   "article": "APRÈS ART. 39",
+   "summary": "Conditionner le financement public des établissements privés lucratifs accueillant des publics fragiles à une recherche raisonnable du bénéfice.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003083",
+   "n": "3083",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 21",
+   "summary": "Amendement rédactionnel.",
+   "state": "A discuter"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003082",
+   "n": "3082",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 34",
+   "summary": "Reporter au 31 décembre 2028 la forfaitisation de la majoration de pension pour trois enfants, le temps d'en évaluer les effets.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003080",
+   "n": "3080",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 26",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003079",
+   "n": "3079",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 26",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003078",
+   "n": "3078",
+   "mean": 0.3547,
+   "conf": 0.9754,
+   "author": "PA794154",
+   "group": "PO845439",
+   "signers": "M. Raux et 36 cosignataires (Écologiste et Social)",
+   "article": "APRÈS ART. 34",
+   "summary": "Compter comme cotisés, pour la retraite anticipée pour carrière longue, les trimestres accordés aux sapeurs-pompiers volontaires.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003074",
+   "n": "3074",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 25",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003069",
+   "n": "3069",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 34",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003068",
+   "n": "3068",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 34",
+   "summary": "Amendement de coordination.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003067",
+   "n": "3067",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 34",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003066",
+   "n": "3066",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 34",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003064",
+   "n": "3064",
+   "mean": 0.5841,
+   "conf": 0.7944,
+   "author": null,
+   "group": "GOV",
+   "signers": "le Gouvernement",
+   "article": "APRÈS ART. 39",
+   "summary": "Dispenser d'agrément ministériel les accords d'entreprise à faible impact financier dans le secteur médico-social privé non lucratif.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003063",
+   "n": "3063",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 28",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003062",
+   "n": "3062",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 28",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003061",
+   "n": "3061",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 28",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003060",
+   "n": "3060",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 28",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003059",
+   "n": "3059",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 28",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003058",
+   "n": "3058",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 24",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003057",
+   "n": "3057",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003056",
+   "n": "3056",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003054",
+   "n": "3054",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003053",
+   "n": "3053",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003052",
+   "n": "3052",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003051",
+   "n": "3051",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003050",
+   "n": "3050",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003049",
+   "n": "3049",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 32",
+   "summary": "Amendement rédactionnel.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003048",
+   "n": "3048",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 30",
+   "summary": "Corriger une erreur matérielle et étendre l'obligation de publier les suites données aux évaluations de la Haute Autorité de santé.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003047",
+   "n": "3047",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 23",
+   "summary": "Réécrire l'article 23 en expérimentation : l'assistance à la téléconsultation est ouverte aux infirmiers libéraux et à domicile, avec un suivi par le médecin traitant.",
+   "state": "En traitement"
+  },
+  {
+   "uid": "AMANR5L17PO838901B3211P0D1N003046",
+   "n": "3046",
+   "mean": 0.4572,
+   "conf": 0.7293,
+   "author": "PA642847",
+   "group": "PO845425",
+   "signers": "M. Bazin",
+   "article": "ART. 22",
+   "summary": "Amendement de coordination juridique.",
+   "state": "A discuter"
+  }
+ ],
+ "trackRecord": {
+  "note": "Prévisions Orcet émises le 28 juin 2026 pour la séance du 27 juin (nouvelle lecture, proposition de loi relative au droit à l'aide à mourir). Les positions de groupe et les députés à surveiller sont confrontés aux votes réels dans l'open data de l'Assemblée.",
+  "groupsArticles": {
+   "Dem": [
+    "pour",
+    97
+   ],
+   "DR": [
+    "pour",
+    100
+   ],
+   "EcoS": [
+    "contre",
+    100
+   ],
+   "EPR": [
+    "pour",
+    98
+   ],
+   "GDR": [
+    "contre",
+    100
+   ],
+   "HOR": [
+    "pour",
+    100
+   ],
+   "LFI-NFP": [
+    "contre",
+    100
+   ],
+   "LIOT": [
+    "pour",
+    76
+   ],
+   "NI": [
+    "pour",
+    91
+   ],
+   "RN": [
+    "pour",
+    100
+   ],
+   "SOC": [
+    "contre",
+    99
+   ],
+   "UDR": [
+    "pour",
+    100
+   ]
+  },
+  "watchArticles": [
+   [
+    "PA643175",
+    40.8,
+    50.6
+   ],
+   [
+    "PA1592",
+    30.3,
+    45.9
+   ],
+   [
+    "PA607619",
+    34.3,
+    41.9
+   ],
+   [
+    "PA720960",
+    52.6,
+    23.7
+   ],
+   [
+    "PA720976",
+    68.2,
+    8
+   ]
   ],
-  "agenda": [
-    "Baisser les prix du carburant par l'encadrement des marges des raffineurs",
-    "Régulariser les travailleurs sans-papiers",
-    "Mieux reconnaître et valoriser les aidants actifs",
-    "Temps partiel thérapeutique pour les fonctionnaires",
-    "Interdire les relations commerciales contribuant à la colonisation (Territoire palestinien occupé, Golan)",
-    "Présomption d'utilisation des contenus culturels par les fournisseurs d'IA",
-    "Pérenniser et étendre Territoires zéro chômeur longue durée",
-    "Lutter contre la vie chère outre-mer (concurrence et régulation)"
+  "items": [
+   {
+    "scrutin": 7751,
+    "label": "Amendement n° 271 (Dubré-Chirat) à l'article 9",
+    "type": "amendement",
+    "mean": 35.16,
+    "sup": 191,
+    "inf": 378,
+    "mid": 7,
+    "conf": 83.93,
+    "pour": 20,
+    "contre": 55,
+    "abst": 9,
+    "adopted": false,
+    "groups": {
+     "Dem": [
+      "contre",
+      93
+     ],
+     "DR": [
+      "pour",
+      86
+     ],
+     "EcoS": [
+      "contre",
+      100
+     ],
+     "EPR": [
+      "contre",
+      96
+     ],
+     "GDR": [
+      "contre",
+      99
+     ],
+     "HOR": [
+      "contre",
+      82
+     ],
+     "LFI-NFP": [
+      "contre",
+      100
+     ],
+     "LIOT": [
+      "contre",
+      83
+     ],
+     "NI": [
+      "divise",
+      45
+     ],
+     "RN": [
+      "pour",
+      100
+     ],
+     "SOC": [
+      "contre",
+      99
+     ],
+     "UDR": [
+      "pour",
+      100
+     ]
+    },
+    "watch": [
+     [
+      "PA796078",
+      63.5,
+      46.9
+     ],
+     [
+      "PA607553",
+      43.4,
+      42.7
+     ],
+     [
+      "PA841339",
+      53.5,
+      36
+     ],
+     [
+      "PA2952",
+      47.3,
+      30.6
+     ],
+     [
+      "PA721486",
+      42.6,
+      26
+     ],
+     [
+      "PA793992",
+      41.3,
+      23.7
+     ],
+     [
+      "PA332228",
+      41.1,
+      23.5
+     ],
+     [
+      "PA794038",
+      62.3,
+      23.4
+     ],
+     [
+      "PA794470",
+      37.4,
+      19.8
+     ],
+     [
+      "PA642725",
+      69,
+      16.7
+     ]
+    ]
+   },
+   {
+    "scrutin": 7797,
+    "label": "Amendement n° 2 (Simion) à l'article 15",
+    "type": "amendement",
+    "mean": 34.21,
+    "sup": 190,
+    "inf": 382,
+    "mid": 4,
+    "conf": 92.24,
+    "pour": 19,
+    "contre": 63,
+    "abst": 3,
+    "adopted": false,
+    "groups": {
+     "Dem": [
+      "contre",
+      97
+     ],
+     "DR": [
+      "pour",
+      92
+     ],
+     "EcoS": [
+      "contre",
+      100
+     ],
+     "EPR": [
+      "contre",
+      97
+     ],
+     "GDR": [
+      "contre",
+      100
+     ],
+     "HOR": [
+      "contre",
+      88
+     ],
+     "LFI-NFP": [
+      "contre",
+      100
+     ],
+     "LIOT": [
+      "contre",
+      95
+     ],
+     "NI": [
+      "divise",
+      49
+     ],
+     "RN": [
+      "pour",
+      100
+     ],
+     "SOC": [
+      "contre",
+      100
+     ],
+     "UDR": [
+      "pour",
+      100
+     ]
+    },
+    "watch": [
+     [
+      "PA841339",
+      69.7,
+      57.2
+     ],
+     [
+      "PA795050",
+      41.4,
+      38.8
+     ],
+     [
+      "PA793992",
+      45.2,
+      32.7
+     ],
+     [
+      "PA721336",
+      33.5,
+      30.8
+     ],
+     [
+      "PA722102",
+      32.7,
+      30.1
+     ],
+     [
+      "PA794470",
+      42.1,
+      29.6
+     ],
+     [
+      "PA267200",
+      30.9,
+      28.3
+     ],
+     [
+      "PA794038",
+      65,
+      27.4
+     ],
+     [
+      "PA332228",
+      35.5,
+      23
+     ],
+     [
+      "PA842125",
+      34.9,
+      22.5
+     ]
+    ]
+   },
+   {
+    "scrutin": 7761,
+    "label": "Amendement n° 605 (Hetzel) à l'article 9",
+    "type": "amendement",
+    "mean": 40.57,
+    "sup": 230,
+    "inf": 340,
+    "mid": 6,
+    "conf": 91.06,
+    "pour": 31,
+    "contre": 60,
+    "abst": 1,
+    "adopted": false,
+    "groups": {
+     "Dem": [
+      "contre",
+      86
+     ],
+     "DR": [
+      "pour",
+      98
+     ],
+     "EcoS": [
+      "contre",
+      100
+     ],
+     "EPR": [
+      "contre",
+      87
+     ],
+     "GDR": [
+      "contre",
+      100
+     ],
+     "HOR": [
+      "divise",
+      48
+     ],
+     "LFI-NFP": [
+      "contre",
+      100
+     ],
+     "LIOT": [
+      "contre",
+      76
+     ],
+     "NI": [
+      "pour",
+      69
+     ],
+     "RN": [
+      "pour",
+      100
+     ],
+     "SOC": [
+      "contre",
+      100
+     ],
+     "UDR": [
+      "pour",
+      100
+     ]
+    },
+    "watch": [
+     [
+      "PA267318",
+      64,
+      49.6
+     ],
+     [
+      "PA722374",
+      52.6,
+      38.2
+     ],
+     [
+      "PA817203",
+      50.7,
+      37.6
+     ],
+     [
+      "PA719272",
+      62.3,
+      36.1
+     ],
+     [
+      "PA841151",
+      62.5,
+      35.9
+     ]
+    ]
+   },
+   {
+    "scrutin": 7744,
+    "label": "Article 8",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 57,
+    "contre": 27,
+    "abst": 0,
+    "adopted": true
+   },
+   {
+    "scrutin": 7762,
+    "label": "Article 9",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 63,
+    "contre": 28,
+    "abst": 1,
+    "adopted": true
+   },
+   {
+    "scrutin": 7788,
+    "label": "Article 12",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 60,
+    "contre": 31,
+    "abst": 0,
+    "adopted": true
+   },
+   {
+    "scrutin": 7796,
+    "label": "Article 14",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 76,
+    "contre": 0,
+    "abst": 12,
+    "adopted": true
+   },
+   {
+    "scrutin": 7800,
+    "label": "Article 15",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 58,
+    "contre": 30,
+    "abst": 0,
+    "adopted": true
+   },
+   {
+    "scrutin": 7802,
+    "label": "Article 16",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 54,
+    "contre": 26,
+    "abst": 2,
+    "adopted": true
+   },
+   {
+    "scrutin": 7812,
+    "label": "Article 18",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 59,
+    "contre": 10,
+    "abst": 14,
+    "adopted": true
+   },
+   {
+    "scrutin": 7814,
+    "label": "Article 19",
+    "type": "article",
+    "mean": 64.8,
+    "sup": 376,
+    "inf": 198,
+    "mid": 2,
+    "conf": 94.21,
+    "pour": 59,
+    "contre": 21,
+    "abst": 1,
+    "adopted": true
+   },
+   {
+    "scrutin": 7815,
+    "label": "Article 19 bis",
+    "type": "article",
+    "mean": 65.09,
+    "sup": 377,
+    "inf": 196,
+    "mid": 3,
+    "conf": 94.05,
+    "pour": 56,
+    "contre": 21,
+    "abst": 1,
+    "adopted": true,
+    "watch": [
+     [
+      "PA793214",
+      34.3,
+      45.3
+     ],
+     [
+      "PA793796",
+      38,
+      41.5
+     ],
+     [
+      "PA1592",
+      43.8,
+      35.7
+     ],
+     [
+      "PA643175",
+      62.3,
+      32.1
+     ],
+     [
+      "PA607619",
+      48.1,
+      31.4
+     ],
+     [
+      "PA720960",
+      56.8,
+      22.7
+     ],
+     [
+      "PA720976",
+      65.4,
+      14.1
+     ]
+    ]
+   }
   ]
+ },
+ "signals": [
+  {
+   "t": "Texte n° 3188 de la commission — poussée d'amendements",
+   "s": 100,
+   "trend": "critique",
+   "cat": "legislatif",
+   "cur": 951,
+   "base": 5.63
+  },
+  {
+   "t": "Texte n° 3188, article 4 : 151 amendements en 7 jours",
+   "s": 100,
+   "trend": "critique",
+   "cat": "legislatif",
+   "cur": 151,
+   "base": 0,
+   "ev": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    24,
+    0,
+    0,
+    0,
+    22,
+    3,
+    102
+   ]
+  },
+  {
+   "t": "Texte n° 3188, article 6 : 142 amendements en 7 jours",
+   "s": 100,
+   "trend": "critique",
+   "cat": "legislatif",
+   "cur": 142,
+   "base": 0,
+   "ev": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    27,
+    0,
+    0,
+    2,
+    20,
+    3,
+    90
+   ]
+  },
+  {
+   "t": "Texte n° 3188, article premier : 93 amendements en 7 jours",
+   "s": 99,
+   "trend": "critique",
+   "cat": "legislatif",
+   "cur": 93,
+   "base": 0,
+   "ev": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    7,
+    3,
+    82
+   ]
+  },
+  {
+   "t": "PLFG 2026, art. 5 (Recherche et enseignement supérieur) : 13 amendements",
+   "s": 87,
+   "trend": "montant",
+   "cat": "legislatif",
+   "cur": 13,
+   "base": 0,
+   "ev": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3,
+    0,
+    0,
+    10,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": "PLFG 2026, art. 5 (Écologie, mobilité durables) : 13 amendements",
+   "s": 85,
+   "trend": "montant",
+   "cat": "legislatif",
+   "cur": 13,
+   "base": 0.03,
+   "ev": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    4,
+    0,
+    0,
+    9,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": "Fonction publique",
+   "s": 100,
+   "trend": "critique",
+   "cat": "mediatique",
+   "cur": 15,
+   "base": 0.82,
+   "ev": [
+    2,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    4,
+    0,
+    0,
+    5,
+    14,
+    1
+   ]
+  },
+  {
+   "t": "Services publics",
+   "s": 100,
+   "trend": "critique",
+   "cat": "mediatique",
+   "cur": 13,
+   "base": 0.38,
+   "ev": [
+    0,
+    0,
+    1,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    14
+   ]
+  },
+  {
+   "t": "Élection",
+   "s": 100,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 5,
+   "base": 0.55,
+   "ev": [
+    1,
+    2,
+    2,
+    0,
+    1,
+    3,
+    1,
+    5,
+    5
+   ]
+  },
+  {
+   "t": "Salaires",
+   "s": 100,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 5,
+   "base": 0.55,
+   "ev": [
+    1,
+    1,
+    1,
+    3,
+    4,
+    0,
+    2,
+    5
+   ]
+  },
+  {
+   "t": "Droit",
+   "s": 99,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 3,
+   "base": 0.48,
+   "ev": [
+    2,
+    2,
+    1,
+    0,
+    0,
+    1,
+    4,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "t": "Démocratie",
+   "s": 97,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 5,
+   "base": 0.99,
+   "ev": [
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    5,
+    0,
+    3,
+    4,
+    1
+   ]
+  },
+  {
+   "t": "Diplomatie",
+   "s": 96,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 13,
+   "base": 3.52,
+   "ev": [
+    3,
+    1,
+    1,
+    2,
+    2,
+    5,
+    4,
+    2,
+    3,
+    0,
+    4,
+    8,
+    8,
+    14
+   ]
+  },
+  {
+   "t": "Mouvements sociaux",
+   "s": 92,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 3,
+   "base": 0.61,
+   "ev": [
+    1,
+    1,
+    3,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    3
+   ]
+  },
+  {
+   "t": "Dialogue social",
+   "s": 92,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 3,
+   "base": 0.61,
+   "ev": [
+    2,
+    3,
+    1,
+    0,
+    5,
+    2,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "t": "Transports",
+   "s": 88,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 5,
+   "base": 1.3,
+   "ev": [
+    1,
+    0,
+    0,
+    2,
+    1,
+    3,
+    4,
+    5,
+    0,
+    0,
+    1,
+    2,
+    2,
+    4,
+    1
+   ]
+  },
+  {
+   "t": "Technologie",
+   "s": 88,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 7,
+   "base": 1.98,
+   "ev": [
+    2,
+    0,
+    0,
+    6,
+    3,
+    5,
+    3,
+    0,
+    0,
+    2,
+    3,
+    3,
+    7
+   ]
+  },
+  {
+   "t": "Éducation",
+   "s": 80,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 3,
+   "base": 0.85,
+   "ev": [
+    1,
+    1,
+    3,
+    0,
+    3,
+    0,
+    2,
+    1,
+    2,
+    5,
+    2,
+    3,
+    3
+   ]
+  },
+  {
+   "t": "Logement",
+   "s": 79,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 4,
+   "base": 1.26,
+   "ev": [
+    2,
+    3,
+    1,
+    1,
+    1,
+    1,
+    0,
+    2,
+    1,
+    0,
+    4,
+    1,
+    2,
+    4
+   ]
+  },
+  {
+   "t": "International",
+   "s": 76,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 12,
+   "base": 5.98,
+   "ev": [
+    8,
+    3,
+    3,
+    7,
+    8,
+    11,
+    1,
+    6,
+    3,
+    8,
+    8,
+    4,
+    1,
+    12
+   ]
+  },
+  {
+   "t": "Union européenne",
+   "s": 73,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 4,
+   "base": 1.54,
+   "ev": [
+    1,
+    1,
+    1,
+    3,
+    1,
+    5,
+    4,
+    1,
+    0,
+    1,
+    4,
+    1,
+    0,
+    4
+   ]
+  },
+  {
+   "t": "Constitution",
+   "s": 71,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 3,
+   "base": 1.13,
+   "ev": [
+    1,
+    1,
+    1,
+    2,
+    0,
+    0,
+    0,
+    1,
+    0,
+    3,
+    1,
+    3
+   ]
+  },
+  {
+   "t": "Géopolitique",
+   "s": 68,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 4,
+   "base": 1.81,
+   "ev": [
+    2,
+    4,
+    2,
+    4,
+    0,
+    0,
+    1,
+    1,
+    0,
+    0,
+    6,
+    0,
+    0,
+    4
+   ]
+  },
+  {
+   "t": "Climat",
+   "s": 66,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 4,
+   "base": 1.91,
+   "ev": [
+    3,
+    1,
+    2,
+    4,
+    2,
+    1,
+    1,
+    0,
+    1,
+    4,
+    1,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "t": "Terrorisme",
+   "s": 65,
+   "trend": "montant",
+   "cat": "mediatique",
+   "cur": 3,
+   "base": 1.4,
+   "ev": [
+    2,
+    2,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    3
+   ]
+  }
+ ],
+ "agenda": [
+  "Baisser les prix du carburant par l'encadrement des marges des raffineurs",
+  "Régulariser les travailleurs sans-papiers",
+  "Mieux reconnaître et valoriser les aidants actifs",
+  "Temps partiel thérapeutique pour les fonctionnaires",
+  "Interdire les relations commerciales contribuant à la colonisation (Territoire palestinien occupé, Golan)",
+  "Présomption d'utilisation des contenus culturels par les fournisseurs d'IA",
+  "Pérenniser et étendre Territoires zéro chômeur longue durée",
+  "Lutter contre la vie chère outre-mer (concurrence et régulation)"
+ ]
 }

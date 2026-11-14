@@ -14,7 +14,7 @@
     "omni:import": "node scripts/omni-import.mjs",
     "backup": "node scripts/backup.mjs",
     "test": "node --test tests/*.test.mjs",
-    "parliament:build": "node scripts/parliament-build.mjs"
+    "parliament:build": "node scripts/parliament-build.mjs && node --max-old-space-size=6000 scripts/parliament-extra.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",

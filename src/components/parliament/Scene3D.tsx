@@ -19,6 +19,7 @@ type Props = {
   confidence?: number;     // forecast: 0-1, drives shimmer
   targets?: number[] | null; // forecast strategy: deputies to keep lit
   highlightGroup: string | null;
+  alt?: {pos: [number, number, number][]; links: [number, number, number][]} | null; // alternative layout (co-signature map)
   showLinks: boolean;
   autoRotate: boolean;
   onPick: (i: number | null) => void;
@@ -113,7 +114,8 @@ export default function Scene3D(p: Props) {
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     scene.add(mesh);
     const groupColor = new Map(data.groups.map(g => [g.id, new THREE.Color(g.color)]));
-    const galaxyPos = (period: number) => data.deputies.map((d, i) => {
+    const alt = props.current.alt || null;
+    const galaxyPos = (period: number) => alt ? alt.pos : data.deputies.map((d, i) => {
       const q = period >= 0 ? data.periods[period]?.positions[i] : null;
       return (q || d.pos || data.groups.find(g => g.id === d.group)!.centroid) as [number, number, number];
     });
@@ -134,8 +136,8 @@ export default function Scene3D(p: Props) {
     }
 
     // links: nearest neighbours (+ cross-group bridges)
-    const links: [number, number, boolean][] = [];
-    data.deputies.forEach((d, i) => {
+    const links: [number, number, boolean][] = alt ? alt.links.map(([i, j, x]) => [i, j, !!x] as [number, number, boolean]) : [];
+    if (!alt) data.deputies.forEach((d, i) => {
       d.near.slice(0, 3).forEach(([j]) => { if (i < j || !data.deputies[j].near.some(([k]) => k === i)) links.push([i, j, false]); });
       if (d.bridge && d.bridge[1] > 0.88 && data.deputies[d.bridge[0]].group !== d.group) links.push([i, d.bridge[0], true]);
     });
@@ -282,7 +284,7 @@ export default function Scene3D(p: Props) {
       cancelAnimationFrame(raf); ro.disconnect(); controls.dispose(); renderer.dispose(); composer.dispose();
       el.removeChild(renderer.domElement);
     };
-  }, [p.data]);
+  }, [p.data, p.alt]);
 
   useEffect(() => { api.current?.update(p); }, [p.mode, p.period, p.selected, p.compare, p.ballots, p.probs, p.confidence, p.targets, p.highlightGroup, p.showLinks, p.autoRotate]);
 
