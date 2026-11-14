@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 const KEY = (process.env.OPENROUTER_API_KEY || '').trim();
 // Free models first; OpenRouter tries them in order (`models` routing). Override with PARLIAMENT_AI_MODELS=a,b,c
-const MODELS = (process.env.PARLIAMENT_AI_MODELS || 'baidu/ernie-5.5-flash-preview:free,nvidia/nemotron-3-ultra-550b-a55b:free,google/gemma-4-31b-it:free')
+const MODELS = (process.env.PARLIAMENT_AI_MODELS || 'nvidia/nemotron-3-ultra-550b-a55b:free,baidu/ernie-5.5-flash-preview:free,google/gemma-4-31b-it:free')
   .split(',').map(m => m.trim()).filter(Boolean).slice(0, 3);
 const DAILY = Number(process.env.PARLIAMENT_AI_DAILY || 80); // answers per UTC day, whole site
 
@@ -32,24 +32,33 @@ export async function POST(req: NextRequest) {
   if (used.n >= DAILY) return NextResponse.json({error: 'budget', detail: `Daily limit reached (${DAILY} answers). Try again tomorrow.`});
 
   const history = (body.history || []).slice(-6).filter(m => (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string').map(m => ({role: m.role, content: m.content.slice(0, 1500)}));
-  try {
-    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', Authorization: `Bearer ${KEY}`},
-      body: JSON.stringify({models: MODELS, max_tokens: 600, temperature: 0.4, reasoning: {exclude: true, effort: 'low'}, messages: [{role: 'system', content: SYSTEM}, {role: 'user', content: `BRIEFING\n${brief}`}, ...history, {role: 'user', content: question}]}),
-      signal: AbortSignal.timeout(25000),
-    });
-    const text = await r.text();
-    let data: any; try { data = JSON.parse(text); } catch { return NextResponse.json({error: 'upstream', detail: `AI provider returned HTTP ${r.status}: ${text.slice(0, 160)}`}); }
-    if (r.status === 429) return NextResponse.json({error: 'busy', detail: 'The free AI models are rate-limited right now. Try again in a minute.'});
-    const answer = data?.choices?.[0]?.message?.content?.trim();
-    if (!answer) return NextResponse.json({error: 'empty', detail: data?.error?.metadata?.raw || data?.error?.message || `no answer (HTTP ${r.status})`});
-    miscSet(bkey, {n: used.n + 1});
-    return NextResponse.json({answer, model: data.model || MODELS[0], remaining: DAILY - used.n - 1});
-  } catch (e) {
-    const timeout = (e as Error).name === 'TimeoutError';
-    return NextResponse.json({error: timeout ? 'timeout' : 'upstream', detail: timeout ? 'The AI took too long to answer. Try a shorter question.' : (e as Error).message});
+  const messages = [{role: 'system', content: SYSTEM}, {role: 'user', content: `BRIEFING\n${brief}`}, ...history, {role: 'user', content: question}];
+  // Free models are flaky (rate limits, hidden reasoning eating the token budget): try each in turn
+  // within one overall deadline, keep the first non-empty answer.
+  const deadline = Date.now() + 26000;
+  let last = 'no model answered';
+  for (const model of MODELS) {
+    const left = deadline - Date.now();
+    if (left < 3000) break;
+    try {
+      const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', Authorization: `Bearer ${KEY}`},
+        body: JSON.stringify({model, max_tokens: 1400, temperature: 0.4, messages}),
+        signal: AbortSignal.timeout(left),
+      });
+      const text = await r.text();
+      let data: any; try { data = JSON.parse(text); } catch { last = `${model}: HTTP ${r.status}`; continue; }
+      const answer = data?.choices?.[0]?.message?.content?.trim();
+      if (!answer) { last = `${model}: ${data?.error?.metadata?.raw || data?.error?.message || data?.choices?.[0]?.finish_reason || `HTTP ${r.status}`}`; continue; }
+      miscSet(bkey, {n: used.n + 1});
+      return NextResponse.json({answer, model: data.model || model, remaining: DAILY - used.n - 1});
+    } catch (e) {
+      last = `${model}: ${(e as Error).name === 'TimeoutError' ? 'timeout' : (e as Error).message}`;
+    }
   }
+  const busy = /429|rate/i.test(last);
+  return NextResponse.json({error: busy ? 'busy' : 'upstream', detail: busy ? 'The free AI models are rate-limited right now. Try again in a minute.' : `The AI could not answer (${last.slice(0, 160)}). Please try again.`});
 }
 
 export async function GET() {
