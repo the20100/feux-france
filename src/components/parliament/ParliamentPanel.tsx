@@ -1,8 +1,10 @@
 'use client';
 import dynamic from 'next/dynamic';
-import {Fragment, useEffect, useMemo, useRef, useState} from 'react';
+import {Fragment, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {Forecast, Galaxy} from './types';
 import {ForecastDetail, ForecastList, SignalsRadar, TrackRecord} from './Forecast';
+import StrategyPanel, {useStrategy} from './Strategy';
+import type {Goal} from './whip';
 const Insights = dynamic(() => import('./Insights'), {ssr: false, loading: () => <div className="omni-map-loading">Crunching the legislature…</div>});
 import {BALLOT_LABEL, anPage, cap, pct, photo, scrutinPage} from './types';
 // group colours as readable text on the dark background
@@ -38,6 +40,8 @@ export default function ParliamentPanel() {
   const [fcSel, setFcSel] = useState(0);
   const [fcSort, setFcSort] = useState('tension');
   const [overlay, setOverlay] = useState<'track' | 'signals' | null>(null);
+  const [fcPane, setFcPane] = useState<'forecast' | 'strategy'>('forecast');
+  const [goal, setGoal] = useState<Goal>('pass');
   const booted = useRef(false);
 
   useEffect(() => {
@@ -77,7 +81,9 @@ export default function ParliamentPanel() {
     return () => clearInterval(t);
   }, [playing, data]);
 
-  const agreement = (i: number, j: number) => { if (!agree || !data) return null; const v = agree[i * data.deputies.length + j]; return v === 255 ? null : v / 200; };
+  const agreement = useCallback((i: number, j: number) => { if (!agree || !data) return null; const v = agree[i * data.deputies.length + j]; return v === 255 ? null : v / 200; }, [agree, data]);
+  const strat = useStrategy(data, fc?.live[fcSel], goal, agreement, view === 'forecast' && fcPane === 'strategy' && !!agree);
+  const targets = useMemo(() => strat ? [...strat.persuade.slice(0, 15), ...strat.mobilise.slice(0, 15)].flatMap(t => t.messenger ? [t.i, t.messenger.i] : [t.i]) : null, [strat]);
   const gcolor = useMemo(() => new Map(data?.groups.map(g => [g.id, g.color]) || []), [data]);
 
   const list = useMemo(() => {
@@ -184,7 +190,7 @@ export default function ParliamentPanel() {
 
       <section className="omni-map-area parl-stage">
         <Scene3D data={data} mode={sceneMode} period={view === 'galaxy' ? period : -1} selected={selected} compare={compare}
-          ballots={view === 'hemicycle' ? kv?.ballots ?? null : null} probs={sceneMode === 'forecast' ? fa?.p ?? null : null} confidence={fa?.conf} highlightGroup={group} showLinks={links} autoRotate={rotate && selected == null}
+          ballots={view === 'hemicycle' ? kv?.ballots ?? null : null} probs={sceneMode === 'forecast' ? fa?.p ?? null : null} confidence={fa?.conf} targets={sceneMode === 'forecast' && fcPane === 'strategy' ? targets : null} highlightGroup={group} showLinks={links} autoRotate={rotate && selected == null}
           onPick={pickDeputy} onHover={(i, x, y) => setHover(i == null ? null : {i, x, y})} />
         {hover && <div className="parl-tip" style={{left: hover.x + 14, top: hover.y + 10}}>
           <b>{data.deputies[hover.i].name}</b><span style={{color: tc(gcolor.get(data.deputies[hover.i].group))}}>{data.deputies[hover.i].group}</span>
@@ -210,7 +216,11 @@ export default function ParliamentPanel() {
       </section>
 
       <aside className="omni-detail parl-detail">
-        {view === 'forecast' && fa && fc ? <ForecastDetail fc={fc} data={data} a={fa} selected={selected} agreement={agreement} onOpen={() => setView('galaxy')} onClear={() => setSelected(null)} />
+        {view === 'forecast' && fa && fc ? <>
+          <div className="parl-seg fc-panes">{([['forecast', '◉ Forecast'], ['strategy', '⚑ Strategy']] as const).map(([k, l]) => <button key={k} aria-pressed={fcPane === k} onClick={() => setFcPane(k)}>{l}</button>)}</div>
+          {fcPane === 'strategy' ? (strat ? <StrategyPanel data={data} a={fa} goal={goal} setGoal={setGoal} pl={strat} onPick={setSelected} selected={selected} /> : <p className="parl-muted">Computing…</p>)
+          : <ForecastDetail fc={fc} data={data} a={fa} selected={selected} agreement={agreement} onOpen={() => setView('galaxy')} onClear={() => setSelected(null)} />}
+        </>
         : view === 'hemicycle' && kv ? <div className="parl-card">
           <p className="omni-eyebrow">SCRUTIN N°{kv.n} · {kv.date} · {kv.type === 'SPS' ? 'SOLEMN' : 'ORDINARY'}</p>
           <h2>{cap(kv.title)}</h2>

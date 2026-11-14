@@ -17,6 +17,7 @@ type Props = {
   ballots: string | null;  // key vote ballots for hemicycle colouring
   probs?: number[] | null; // forecast: per-seat P(for) 0-100
   confidence?: number;     // forecast: 0-1, drives shimmer
+  targets?: number[] | null; // forecast strategy: deputies to keep lit
   highlightGroup: string | null;
   showLinks: boolean;
   autoRotate: boolean;
@@ -168,6 +169,7 @@ export default function Scene3D(p: Props) {
         if (q.mode === 'forecast' && q.probs) c = probColor(q.probs[i]);
         let dim = false;
         if (q.highlightGroup && d.group !== q.highlightGroup) dim = true;
+        if (q.mode === 'forecast' && q.targets && !q.targets.includes(i) && i !== sel) dim = true;
         if (q.mode === 'galaxy' && sel != null && i !== sel && i !== cmp && !nearSet.has(i)) dim = true;
         const out = dim ? c.clone().multiplyScalar(0.18) : c;
         mesh.setColorAt(i, out);
@@ -261,7 +263,7 @@ export default function Scene3D(p: Props) {
     };
   }, [p.data]);
 
-  useEffect(() => { api.current?.update(p); }, [p.mode, p.period, p.selected, p.compare, p.ballots, p.probs, p.confidence, p.highlightGroup, p.showLinks, p.autoRotate]);
+  useEffect(() => { api.current?.update(p); }, [p.mode, p.period, p.selected, p.compare, p.ballots, p.probs, p.confidence, p.targets, p.highlightGroup, p.showLinks, p.autoRotate]);
 
   return <div ref={host} className="parl-scene" />;
 }
